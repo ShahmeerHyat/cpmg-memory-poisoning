@@ -343,7 +343,7 @@ def main():
 
     bar_models = ["cpmg_full", "content_only", "piguard", "keyword", "tfidf_memory", "tfidf_full"]
     lv = ["L1", "L2", "L3", "heldout_family"]
-    fig, ax = plt.subplots(figsize=(7.5, 3.8))
+    fig, ax = plt.subplots(figsize=(7.5, 4.2))
     style_ax(ax)
     w = 0.8 / len(bar_models)
     for k, m in enumerate(bar_models):
@@ -355,7 +355,7 @@ def main():
     ax.set_ylim(0, 1.05)
     ax.set_ylabel("AUROC (test)", fontsize=8, color=INK2)
     ax.set_title("AUROC by attack level (dashed line = chance)", fontsize=10, color=INK, loc="left")
-    ax.legend(fontsize=6.5, frameon=False, ncol=3, loc="lower left", labelcolor=INK)
+    ax.legend(fontsize=6.5, frameon=False, ncol=3, loc="upper center", bbox_to_anchor=(0.5, -0.12), labelcolor=INK)
     fig.tight_layout()
     fig.savefig(R("plots", "auroc_by_level.png"), dpi=200)
     plt.close(fig)
