@@ -1,0 +1,6 @@
+.venv/
+checkpoints/
+data/raw/*/
+__pycache__/
+*.pyc
+report/build/
