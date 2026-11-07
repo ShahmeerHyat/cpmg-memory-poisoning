@@ -22,3 +22,9 @@ figcaption, .caption { font-size: 8pt; color: #333; text-align: center; margin-t
 .tcap { font-size: 8pt; color: #333; text-align: left; margin: 6pt 0 0 0; font-weight: 600; }
 code { font-size: 8pt; }
 .small { font-size: 8pt; color: #333; }
+table { page-break-inside: avoid; break-inside: avoid; }
+tr, td, th { page-break-inside: avoid; break-inside: avoid; }
+td:first-child { white-space: nowrap; }
+figure img { max-width: 78%; }
+.tcap { page-break-after: avoid; break-after: avoid; }
+td { white-space: nowrap; }
