@@ -3,6 +3,10 @@
 Course project, Agentic AI (AI-4015), FAST-NUCES Islamabad.
 Group: Shahmeer Ali (23I-0119), Mohammad Soban (23I-0056), Ali Rauf (23I-0076).
 
+- Code and results: https://github.com/ShahmeerHyat/cpmg-memory-poisoning
+- Model checkpoints: https://huggingface.co/ShahmeerHyat/cpmg-memory-poisoning
+- Report: `report/report.pdf` · Data licenses: `DATA_LICENSES.md`
+
 CPMG is a DeBERTa-v3-base cross-encoder that scores a stored agent memory for poisoning risk using
 the memory, its source interaction, the current query/action, up to 3 co-retrieved memories and
 system-recorded provenance tokens, plus a deterministic authority policy that stops low-authority
@@ -19,6 +23,7 @@ train.py eval.py   training (all DeBERTa variants) and evaluation (all models, t
 configs/*.yaml     one config per DeBERTa run
 results/           metrics.csv/json, tables.md, plots/, preds/, runs/, logs/, DECISIONS.md, PROGRESS.md
 report/            report source (Markdown + generated LaTeX) and report.pdf
+hf/                Hugging Face model card generator
 ```
 
 ## Reproduce
@@ -70,7 +75,9 @@ cd ../..
 .venv/bin/python report/build_report.py   # -> report/report.pdf (+ report/report.tex)
 ```
 
-Checkpoints are written to `checkpoints/` (git-ignored; about 0.7 GB each).
+Checkpoints are written to `checkpoints/` (git-ignored; about 0.7 GB each). Only two are published, on Hugging Face
+(https://huggingface.co/ShahmeerHyat/cpmg-memory-poisoning): `cpmg_full/` (CPMG) and `content_only/` (content-only baseline). The ablation, write-only and
+cross-source checkpoints (about 3.4 GB more) are not uploaded; rebuild them with `./run_all_training.sh`.
 
 ## Honest scope
 - Single seed (42); no confidence intervals across seeds. AUROC 95% intervals are bootstrap over test examples.

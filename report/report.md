@@ -3,7 +3,8 @@
 <div class="cover">
 Agentic AI (AI-4015) · FAST-NUCES Islamabad · Instructor: Sohail Abbas<br>
 Shahmeer Ali (23I-0119) · Mohammad Soban (23I-0056) · Ali Rauf (23I-0076)<br>
-Deliverable: Proposed Methodology and Implementation · 8 November 2026
+Deliverable: Proposed Methodology and Implementation · 8 November 2026<br>
+Code and results: <a href="https://github.com/ShahmeerHyat/cpmg-memory-poisoning">https://github.com/ShahmeerHyat/cpmg-memory-poisoning</a> · Models: <a href="https://huggingface.co/ShahmeerHyat/cpmg-memory-poisoning">https://huggingface.co/ShahmeerHyat/cpmg-memory-poisoning</a>
 </div>
 
 ## 1 Problem and threat model

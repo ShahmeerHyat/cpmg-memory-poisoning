@@ -9,3 +9,4 @@
 - 2026-11-08: Step 6 done: PIGuard zero-shot scored (keyword, TF-IDF, provenance-only done earlier).
 - 2026-11-08: Step 7 done: eval.py -> results/metrics.csv/json, tables.md, policy.json, plots/.
 - 2026-11-08: Step 8 done: report/report.pdf (5 pages, numbers filled from results/ by report/build_report.py), report/report.tex, README.md.
+- 2026-11-08: Submission prep: DATA_LICENSES.md, HF model card, links in README/report, submission/CPMG_submission.zip, personal paths removed from logs.
