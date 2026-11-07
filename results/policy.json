@@ -1,0 +1,86 @@
+{
+ "test": {
+  "by_source": {
+   "ASB|label=0|auth=user": {
+    "records": 39,
+    "protected_action": 0,
+    "blocked": 0
+   },
+   "ASB|label=1|auth=user": {
+    "records": 400,
+    "protected_action": 45,
+    "blocked": 0
+   },
+   "AgentPoison|label=0|auth=external": {
+    "records": 537,
+    "protected_action": 34,
+    "blocked": 34
+   },
+   "AgentPoison|label=0|auth=internal": {
+    "records": 35,
+    "protected_action": 0,
+    "blocked": 0
+   },
+   "AgentPoison|label=1|auth=external": {
+    "records": 324,
+    "protected_action": 16,
+    "blocked": 16
+   },
+   "AgentPoison|label=1|auth=internal": {
+    "records": 35,
+    "protected_action": 35,
+    "blocked": 0
+   },
+   "MemoryGraft|label=0|auth=external": {
+    "records": 12,
+    "protected_action": 1,
+    "blocked": 1
+   },
+   "MemoryGraft|label=1|auth=external": {
+    "records": 3,
+    "protected_action": 2,
+    "blocked": 2
+   },
+   "memshield-bench|label=0|auth=unknown": {
+    "records": 25,
+    "protected_action": 3,
+    "blocked": 3
+   },
+   "memshield-bench|label=1|auth=unknown": {
+    "records": 54,
+    "protected_action": 21,
+    "blocked": 21
+   }
+  },
+  "totals": {
+   "label=1|records": 816,
+   "label=1|protected_action": 119,
+   "label=1|blocked": 39,
+   "label=0|records": 648,
+   "label=0|protected_action": 38,
+   "label=0|blocked": 38
+  }
+ },
+ "asb_xsource": {
+  "by_source": {
+   "ASB|label=0|auth=user": {
+    "records": 199,
+    "protected_action": 5,
+    "blocked": 0
+   },
+   "ASB|label=1|auth=user": {
+    "records": 2012,
+    "protected_action": 202,
+    "blocked": 0
+   }
+  },
+  "totals": {
+   "label=1|records": 2012,
+   "label=1|protected_action": 202,
+   "label=1|blocked": 0,
+   "label=0|records": 199,
+   "label=0|protected_action": 5,
+   "label=0|blocked": 0
+  }
+ }
+}

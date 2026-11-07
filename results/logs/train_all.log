@@ -1,0 +1,21 @@
+[cpmg_full] train 6944 (pos 2987), val 1434; mean len 291, max 512
+[cpmg_full] ep 0 step 100/868 71s
+[cpmg_full] ep 0 step 200/868 141s
+[cpmg_full] ep 0 step 300/868 213s
+[cpmg_full] ep 0 step 400/868 282s
+[cpmg_full] epoch 0 val AUROC 0.9645 (315s)
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  1.94it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  1.94it/s]
+[cpmg_full] ep 1 step 500/868 361s
+[cpmg_full] ep 1 step 600/868 432s
+[cpmg_full] ep 1 step 700/868 504s
+[cpmg_full] ep 1 step 800/868 574s
+[cpmg_full] epoch 1 val AUROC 0.9689 (632s)
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:01<00:00,  1.00s/it]Writing model shards: 100%|██████████| 1/1 [00:01<00:00,  1.00s/it]
+[cpmg_full] done. best val AUROC 0.9689, train 633s, latency 10.5 ms
+[content_only] train 6944 (pos 2987), val 1434; mean len 118, max 512
+[content_only] ep 0 step 100/868 48s
+[content_only] ep 0 step 200/868 96s
+[content_only] ep 0 step 300/868 146s
+[content_only] ep 0 step 400/868 193s
+[content_only] epoch 0 val AUROC 0.8241 (213s)
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  1.95it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  1.95it/s]
