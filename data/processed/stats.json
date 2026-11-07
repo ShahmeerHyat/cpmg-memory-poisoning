@@ -1,0 +1,214 @@
+{
+ "train": {
+  "n": 6944,
+  "pos": 2987,
+  "neg": 3957,
+  "groups": 2172,
+  "by_level_label": {
+   "L1|0": 1177,
+   "L1|1": 1231,
+   "L2|0": 878,
+   "L2|1": 878,
+   "L3|0": 878,
+   "L3|1": 878,
+   "bg|0": 1024
+  },
+  "by_source_label": {
+   "ASB|0": 117,
+   "ASB|1": 117,
+   "AgentPoison|0": 3658,
+   "AgentPoison|1": 2634,
+   "MemoryGraft|0": 66,
+   "MemoryGraft|1": 5,
+   "memshield-bench|0": 116,
+   "memshield-bench|1": 231
+  },
+  "by_family": {
+   "agentpoison_ap": 2634,
+   "memshield_T5_backdoor_trigger": 107,
+   "asb_context_ignoring": 29,
+   "asb_combined_attack": 25,
+   "asb_naive": 25,
+   "asb_escape_characters": 21,
+   "memshield_T1_instruction_override": 20,
+   "asb_fake_completion": 17,
+   "memshield_T2_data_exfiltration": 16,
+   "memshield_T9_security_degradation": 16,
+   "memshield_T4_factual_manipulation": 16,
+   "memshield_T7_recommendation_poisoning": 14,
+   "memshield_T10_c2_persistence": 12,
+   "memshield_T6_experience_poisoning": 11,
+   "memshield_T3_behavioral_drift": 10,
+   "memshield_T8_configuration_poisoning": 9,
+   "memorygraft": 5
+  },
+  "by_provenance_label": {
+   "doc/external|0": 66,
+   "doc/external|1": 5,
+   "tool/internal|0": 210,
+   "tool/internal|1": 210,
+   "tool/user|0": 117,
+   "tool/user|1": 117,
+   "unknown/unknown|0": 116,
+   "unknown/unknown|1": 231,
+   "web/external|0": 3448,
+   "web/external|1": 2424
+  }
+ },
+ "test": {
+  "n": 2900,
+  "pos": 1534,
+  "neg": 1366,
+  "groups": 640,
+  "by_level_label": {
+   "L1|0": 435,
+   "L1|1": 816,
+   "L2|0": 359,
+   "L2|1": 359,
+   "L3|0": 359,
+   "L3|1": 359,
+   "bg|0": 213
+  },
+  "by_source_label": {
+   "ASB|0": 39,
+   "ASB|1": 400,
+   "AgentPoison|0": 1290,
+   "AgentPoison|1": 1077,
+   "MemoryGraft|0": 12,
+   "MemoryGraft|1": 3,
+   "memshield-bench|0": 25,
+   "memshield-bench|1": 54
+  },
+  "by_family": {
+   "agentpoison_ap": 585,
+   "badchain": 492,
+   "asb_combined_attack": 83,
+   "asb_context_ignoring": 80,
+   "asb_naive": 79,
+   "asb_fake_completion": 79,
+   "asb_escape_characters": 79,
+   "memshield_T5_backdoor_trigger": 23,
+   "memshield_T3_behavioral_drift": 6,
+   "memshield_T8_configuration_poisoning": 5,
+   "memshield_T9_security_degradation": 4,
+   "memshield_T1_instruction_override": 4,
+   "memshield_T4_factual_manipulation": 4,
+   "memshield_T10_c2_persistence": 3,
+   "memshield_T6_experience_poisoning": 3,
+   "memorygraft": 3,
+   "memshield_T2_data_exfiltration": 1,
+   "memshield_T7_recommendation_poisoning": 1
+  },
+  "by_provenance_label": {
+   "doc/external|0": 12,
+   "doc/external|1": 3,
+   "tool/internal|0": 105,
+   "tool/internal|1": 105,
+   "tool/user|0": 39,
+   "tool/user|1": 400,
+   "unknown/unknown|0": 25,
+   "unknown/unknown|1": 54,
+   "web/external|0": 1185,
+   "web/external|1": 972
+  }
+ },
+ "val": {
+  "n": 1434,
+  "pos": 586,
+  "neg": 848,
+  "groups": 467,
+  "by_level_label": {
+   "L1|0": 249,
+   "L1|1": 250,
+   "L2|0": 168,
+   "L2|1": 168,
+   "L3|0": 168,
+   "L3|1": 168,
+   "bg|0": 263
+  },
+  "by_source_label": {
+   "ASB|0": 43,
+   "ASB|1": 43,
+   "AgentPoison|0": 767,
+   "AgentPoison|1": 504,
+   "MemoryGraft|0": 22,
+   "MemoryGraft|1": 2,
+   "memshield-bench|0": 16,
+   "memshield-bench|1": 37
+  },
+  "by_family": {
+   "agentpoison_ap": 504,
+   "memshield_T5_backdoor_trigger": 20,
+   "asb_fake_completion": 10,
+   "asb_combined_attack": 10,
+   "asb_escape_characters": 9,
+   "asb_naive": 8,
+   "asb_context_ignoring": 6,
+   "memshield_T9_security_degradation": 4,
+   "memshield_T8_configuration_poisoning": 3,
+   "memshield_T4_factual_manipulation": 3,
+   "memshield_T3_behavioral_drift": 2,
+   "memorygraft": 2,
+   "memshield_T10_c2_persistence": 2,
+   "memshield_T2_data_exfiltration": 1,
+   "memshield_T6_experience_poisoning": 1,
+   "memshield_T1_instruction_override": 1
+  },
+  "by_provenance_label": {
+   "doc/external|0": 22,
+   "doc/external|1": 2,
+   "tool/internal|0": 27,
+   "tool/internal|1": 27,
+   "tool/user|0": 43,
+   "tool/user|1": 43,
+   "unknown/unknown|0": 16,
+   "unknown/unknown|1": 37,
+   "web/external|0": 740,
+   "web/external|1": 477
+  }
+ },
+ "test_asb_xsource": {
+  "n": 2211,
+  "pos": 2012,
+  "neg": 199,
+  "groups": 10,
+  "by_level_label": {
+   "L1|0": 199,
+   "L1|1": 2012
+  },
+  "by_source_label": {
+   "ASB|0": 199,
+   "ASB|1": 2012
+  },
+  "by_family": {
+   "asb_combined_attack": 417,
+   "asb_context_ignoring": 400,
+   "asb_naive": 399,
+   "asb_escape_characters": 398,
+   "asb_fake_completion": 398
+  },
+  "by_provenance_label": {
+   "tool/user|0": 199,
+   "tool/user|1": 2012
+  }
+ },
+ "test_notinject": {
+  "n": 339,
+  "pos": 0,
+  "neg": 339,
+  "groups": 339,
+  "by_level_label": {
+   "overdefense|0": 339
+  },
+  "by_source_label": {
+   "NotInject|0": 339
+  },
+  "by_family": {},
+  "by_provenance_label": {
+   "chat/user|0": 339
+  }
+ },
+ "groups_crossing_splits": 0,
+ "test_memories_seen_in_train": 1,
+ "heldout_family_in_train_or_val": 0
+}
