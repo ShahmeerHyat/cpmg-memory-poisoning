@@ -5,3 +5,17 @@ __pycache__/
 *.pyc
 report/build/
 submission/
+paper/_pages/
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.bbl
+paper/*.blg
+paper/*.fls
+paper/*.fdb_latexmk
+paper/figs/test*
+paper/figures/_cm*
+results/STOP
+data/processed_v1/
+results/logs/llama_server_paraphrase.log
+paper/paper_review.aux

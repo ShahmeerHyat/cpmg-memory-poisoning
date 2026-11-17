@@ -1,0 +1,13 @@
+name: cpmg_noehr
+variant: full
+exclude_sources: [ehragent]
+seed: 42
+max_len: 512
+batch_size: 8
+grad_accum: 2
+lr: 2.0e-5
+weight_decay: 0.01
+warmup: 0.1
+epochs: 2
+grad_ckpt: true
+prov_dropout: 0.15

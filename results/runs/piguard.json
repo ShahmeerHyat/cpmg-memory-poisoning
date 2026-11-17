@@ -1,6 +1,6 @@
 {
  "name": "piguard",
- "latency_ms_bs1": 11.034955978393555,
+ "latency_ms_bs1": 11.949840784072876,
  "n_params": 183833090,
  "device": "NVIDIA GeForce RTX 5060 Laptop GPU",
  "sanity_scores": [

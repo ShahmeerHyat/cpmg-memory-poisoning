@@ -1,99 +1,398 @@
-[cpmg_full] train 6944 (pos 2987), val 1434; mean len 291, max 512
-[cpmg_full] ep 0 step 100/868 71s
-[cpmg_full] ep 0 step 200/868 141s
-[cpmg_full] ep 0 step 300/868 213s
-[cpmg_full] ep 0 step 400/868 282s
-[cpmg_full] epoch 0 val AUROC 0.9645 (315s)
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  1.94it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  1.94it/s]
-[cpmg_full] ep 1 step 500/868 361s
-[cpmg_full] ep 1 step 600/868 432s
-[cpmg_full] ep 1 step 700/868 504s
-[cpmg_full] ep 1 step 800/868 574s
-[cpmg_full] epoch 1 val AUROC 0.9689 (632s)
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:01<00:00,  1.00s/it]Writing model shards: 100%|██████████| 1/1 [00:01<00:00,  1.00s/it]
-[cpmg_full] done. best val AUROC 0.9689, train 633s, latency 10.5 ms
-[content_only] train 6944 (pos 2987), val 1434; mean len 118, max 512
-[content_only] ep 0 step 100/868 48s
-[content_only] ep 0 step 200/868 96s
-[content_only] ep 0 step 300/868 146s
-[content_only] ep 0 step 400/868 193s
-[content_only] epoch 0 val AUROC 0.8241 (213s)
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  1.95it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  1.95it/s]
-[content_only] ep 1 step 500/868 244s
-[content_only] ep 1 step 600/868 292s
-[content_only] ep 1 step 700/868 342s
-[content_only] ep 1 step 800/868 392s
-[content_only] epoch 1 val AUROC 0.8256 (429s)
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:01<00:00,  1.01s/it]Writing model shards: 100%|██████████| 1/1 [00:01<00:00,  1.01s/it]
-[content_only] done. best val AUROC 0.8256, train 430s, latency 10.4 ms
-[abl_no_prov] train 6944 (pos 2987), val 1434; mean len 287, max 512
-[abl_no_prov] ep 0 step 100/868 70s
-[abl_no_prov] ep 0 step 200/868 139s
-[abl_no_prov] ep 0 step 300/868 211s
-[abl_no_prov] ep 0 step 400/868 280s
-[abl_no_prov] epoch 0 val AUROC 0.9656 (312s)
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  1.95it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  1.95it/s]
-[abl_no_prov] ep 1 step 500/868 358s
-[abl_no_prov] ep 1 step 600/868 428s
-[abl_no_prov] ep 1 step 700/868 500s
-[abl_no_prov] ep 1 step 800/868 569s
-[abl_no_prov] epoch 1 val AUROC 0.9693 (627s)
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  1.02it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  1.02it/s]
-[abl_no_prov] done. best val AUROC 0.9693, train 628s, latency 10.6 ms
-[abl_no_query] train 6944 (pos 2987), val 1434; mean len 280, max 512
-[abl_no_query] ep 0 step 100/868 69s
-[abl_no_query] ep 0 step 200/868 137s
-[abl_no_query] ep 0 step 300/868 208s
-[abl_no_query] ep 0 step 400/868 276s
-[abl_no_query] epoch 0 val AUROC 0.9314 (308s)
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  2.09it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  2.09it/s]
-[abl_no_query] ep 1 step 500/868 354s
-[abl_no_query] ep 1 step 600/868 423s
-[abl_no_query] ep 1 step 700/868 493s
-[abl_no_query] ep 1 step 800/868 562s
-[abl_no_query] epoch 1 val AUROC 0.9419 (619s)
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  1.04it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  1.04it/s]
-[abl_no_query] done. best val AUROC 0.9419, train 620s, latency 10.5 ms
-[abl_no_nbrs] train 6944 (pos 2987), val 1434; mean len 144, max 512
-[abl_no_nbrs] ep 0 step 100/868 50s
-[abl_no_nbrs] ep 0 step 200/868 100s
-[abl_no_nbrs] ep 0 step 300/868 153s
-[abl_no_nbrs] ep 0 step 400/868 203s
-[abl_no_nbrs] epoch 0 val AUROC 0.8484 (224s)
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  1.77it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  1.77it/s]
-[abl_no_nbrs] ep 1 step 500/868 257s
-[abl_no_nbrs] ep 1 step 600/868 308s
-[abl_no_nbrs] ep 1 step 700/868 361s
-[abl_no_nbrs] ep 1 step 800/868 413s
-[abl_no_nbrs] epoch 1 val AUROC 0.8535 (452s)
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:01<00:00,  1.08s/it]Writing model shards: 100%|██████████| 1/1 [00:01<00:00,  1.08s/it]
-[abl_no_nbrs] done. best val AUROC 0.8535, train 453s, latency 10.1 ms
-[write_only] train 6944 (pos 2987), val 1434; mean len 132, max 512
-[write_only] ep 0 step 100/868 49s
-[write_only] ep 0 step 200/868 98s
-[write_only] ep 0 step 300/868 150s
-[write_only] ep 0 step 400/868 198s
-[write_only] epoch 0 val AUROC 0.8233 (218s)
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  2.10it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  2.10it/s]
-[write_only] ep 1 step 500/868 251s
-[write_only] ep 1 step 600/868 300s
-[write_only] ep 1 step 700/868 352s
-[write_only] ep 1 step 800/868 402s
-[write_only] epoch 1 val AUROC 0.8262 (441s)
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:01<00:00,  1.09s/it]Writing model shards: 100%|██████████| 1/1 [00:01<00:00,  1.09s/it]
-[write_only] done. best val AUROC 0.8262, train 442s, latency 10.2 ms
-[cpmg_noasb] train 6710 (pos 2870), val 1348; mean len 284, max 512
-[cpmg_noasb] ep 0 step 100/840 66s
-[cpmg_noasb] ep 0 step 200/840 132s
-[cpmg_noasb] ep 0 step 300/840 198s
-[cpmg_noasb] ep 0 step 400/840 264s
-[cpmg_noasb] epoch 0 val AUROC 0.9601 (286s)
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  2.07it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  2.07it/s]
-[cpmg_noasb] ep 1 step 500/840 339s
-[cpmg_noasb] ep 1 step 600/840 403s
-[cpmg_noasb] ep 1 step 700/840 468s
-[cpmg_noasb] ep 1 step 800/840 533s
-[cpmg_noasb] epoch 1 val AUROC 0.9632 (566s)
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:01<00:00,  1.04s/it]Writing model shards: 100%|██████████| 1/1 [00:01<00:00,  1.04s/it]
-[cpmg_noasb] done. best val AUROC 0.9632, train 567s, latency 10.6 ms
+[cpmg_full] train 19206 (poison 14377, active 3506 of 18554 defined), val 4136; mean len 287, max 512
+[cpmg_full] ep 0 step 100/2402 76s
+[cpmg_full] STOP requested: state saved at step 104/2402. Rerun to resume.
+[queue] stopped before content_only
+[cpmg_full] train 19206 (poison 14377, active 3506 of 18554 defined), val 4136; mean len 287, max 512
+[cpmg_full] RESUMED at epoch 0, batch 208, step 104/2402
+[cpmg_full] ep 0 step 200/2402 146s
+[cpmg_full] ep 0 step 300/2402 212s
+[cpmg_full] ep 0 step 400/2402 284s
+[cpmg_full] ep 0 step 500/2402 353s
+[cpmg_full] ep 0 step 600/2402 421s
+[cpmg_full] ep 0 step 700/2402 490s
+[cpmg_full] ep 0 step 800/2402 560s
+[cpmg_full] ep 0 step 900/2402 626s
+[cpmg_full] ep 0 step 1000/2402 694s
+[cpmg_full] STOP requested: state saved at step 1078/2402. Rerun to resume.
+[queue] stopped before content_only
+[cpmg_full] train 19206 (poison 14377, active 3506 of 18554 defined), val 4136; mean len 287, max 512
+[cpmg_full] RESUMED at epoch 0, batch 2156, step 1078/2402
+[cpmg_full] ep 0 step 1100/2402 764s
+[cpmg_full] ep 0 step 1200/2402 830s
+[cpmg_full] epoch 0 val AUROC {'poison': 0.9999909428493796, 'active': 1.0, 'mean': 0.9999954714246898} (858s)
+[cpmg_full] ep 1 step 1300/2402 928s
+[cpmg_full] ep 1 step 1400/2402 1004s
+[cpmg_full] ep 1 step 1500/2402 1094s
+[cpmg_full] ep 1 step 1600/2402 1176s
+[cpmg_full] ep 1 step 1700/2402 1265s
+[cpmg_full] ep 1 step 1800/2402 1365s
+[cpmg_full] ep 1 step 1900/2402 1467s
+[cpmg_full] ep 1 step 2000/2402 1549s
+[cpmg_full] ep 1 step 2100/2402 1643s
+[cpmg_full] ep 1 step 2200/2402 1750s
+[cpmg_full] ep 1 step 2300/2402 1853s
+[cpmg_full] ep 1 step 2400/2402 1956s
+[cpmg_full] epoch 1 val AUROC {'poison': 0.9999927542795036, 'active': 1.0, 'mean': 0.9999963771397518} (1985s)
+[cpmg_full] done. best val AUROC 1.0000, train 1988s, latency 10.5 ms
+[content_only] train 19206 (poison 14377, active 3506 of 18554 defined), val 4136; mean len 110, max 512
+[content_only] ep 0 step 100/2402 48s
+[content_only] ep 0 step 200/2402 99s
+[content_only] ep 0 step 300/2402 145s
+[content_only] ep 0 step 400/2402 200s
+[content_only] ep 0 step 500/2402 250s
+[content_only] ep 0 step 600/2402 300s
+[content_only] ep 0 step 700/2402 349s
+[content_only] ep 0 step 800/2402 400s
+[content_only] ep 0 step 900/2402 447s
+[content_only] ep 0 step 1000/2402 495s
+[content_only] ep 0 step 1100/2402 547s
+[content_only] ep 0 step 1200/2402 593s
+[content_only] epoch 0 val AUROC {'poison': 0.8312337348670108, 'active': 0.5987754661087294, 'mean': 0.7150046004878701} (603s)
+[content_only] ep 1 step 1300/2402 651s
+[content_only] ep 1 step 1400/2402 704s
+[content_only] ep 1 step 1500/2402 751s
+[content_only] ep 1 step 1600/2402 801s
+[content_only] ep 1 step 1700/2402 848s
+[content_only] ep 1 step 1800/2402 901s
+[content_only] ep 1 step 1900/2402 951s
+[content_only] ep 1 step 2000/2402 997s
+[content_only] ep 1 step 2100/2402 1047s
+[content_only] ep 1 step 2200/2402 1101s
+[content_only] ep 1 step 2300/2402 1151s
+[content_only] ep 1 step 2400/2402 1200s
+[content_only] epoch 1 val AUROC {'poison': 0.831354044017752, 'active': 0.5975428818362543, 'mean': 0.7144484629270031} (1210s)
+[content_only] done. best val AUROC 0.7150, train 1213s, latency 10.4 ms
+[abl_no_query] train 19206 (poison 14377, active 3506 of 18554 defined), val 4136; mean len 272, max 512
+[abl_no_query] ep 0 step 100/2402 66s
+[abl_no_query] ep 0 step 200/2402 133s
+[abl_no_query] ep 0 step 300/2402 197s
+[abl_no_query] ep 0 step 400/2402 267s
+[abl_no_query] ep 0 step 500/2402 335s
+[abl_no_query] ep 0 step 600/2402 402s
+[abl_no_query] ep 0 step 700/2402 468s
+[abl_no_query] ep 0 step 800/2402 537s
+[abl_no_query] ep 0 step 900/2402 601s
+[abl_no_query] ep 0 step 1000/2402 667s
+[abl_no_query] ep 0 step 1100/2402 735s
+[abl_no_query] ep 0 step 1200/2402 799s
+[abl_no_query] epoch 0 val AUROC {'poison': 0.9999787156960421, 'active': 0.6573764016214219, 'mean': 0.828677558658732} (823s)
+[abl_no_query] ep 1 step 1300/2402 889s
+[abl_no_query] ep 1 step 1400/2402 959s
+[abl_no_query] ep 1 step 1500/2402 1023s
+[abl_no_query] ep 1 step 1600/2402 1091s
+[abl_no_query] ep 1 step 1700/2402 1156s
+[abl_no_query] ep 1 step 1800/2402 1224s
+[abl_no_query] ep 1 step 1900/2402 1290s
+[abl_no_query] ep 1 step 2000/2402 1354s
+[abl_no_query] ep 1 step 2100/2402 1421s
+[abl_no_query] ep 1 step 2200/2402 1491s
+[abl_no_query] ep 1 step 2300/2402 1558s
+[abl_no_query] ep 1 step 2400/2402 1623s
+[abl_no_query] epoch 1 val AUROC {'poison': 0.9999936599945657, 'active': 0.6559262902091514, 'mean': 0.8279599751018585} (1649s)
+[abl_no_query] done. best val AUROC 0.8287, train 1651s, latency 10.6 ms
+[abl_no_nbrs] train 19206 (poison 14377, active 3506 of 18554 defined), val 4136; mean len 140, max 512
+[abl_no_nbrs] ep 0 step 100/2402 50s
+[abl_no_nbrs] ep 0 step 200/2402 103s
+[abl_no_nbrs] ep 0 step 300/2402 152s
+[abl_no_nbrs] ep 0 step 400/2402 209s
+[abl_no_nbrs] ep 0 step 500/2402 261s
+[abl_no_nbrs] ep 0 step 600/2402 313s
+[abl_no_nbrs] ep 0 step 700/2402 364s
+[abl_no_nbrs] ep 0 step 800/2402 418s
+[abl_no_nbrs] ep 0 step 900/2402 467s
+[abl_no_nbrs] ep 0 step 1000/2402 518s
+[abl_no_nbrs] ep 0 step 1100/2402 572s
+[abl_no_nbrs] ep 0 step 1200/2402 621s
+[abl_no_nbrs] epoch 0 val AUROC {'poison': 0.8931481146031457, 'active': 0.9405610740293034, 'mean': 0.9168545943162245} (632s)
+[abl_no_nbrs] ep 1 step 1300/2402 682s
+[abl_no_nbrs] ep 1 step 1400/2402 737s
+[abl_no_nbrs] ep 1 step 1500/2402 786s
+[abl_no_nbrs] ep 1 step 1600/2402 840s
+[abl_no_nbrs] ep 1 step 1700/2402 889s
+[abl_no_nbrs] ep 1 step 1800/2402 944s
+[abl_no_nbrs] ep 1 step 1900/2402 996s
+[abl_no_nbrs] ep 1 step 2000/2402 1045s
+[abl_no_nbrs] ep 1 step 2100/2402 1097s
+[abl_no_nbrs] ep 1 step 2200/2402 1153s
+[abl_no_nbrs] ep 1 step 2300/2402 1205s
+[abl_no_nbrs] ep 1 step 2400/2402 1256s
+[abl_no_nbrs] epoch 1 val AUROC {'poison': 0.8955767895420101, 'active': 0.9424662613946263, 'mean': 0.9190215254683183} (1269s)
+[abl_no_nbrs] done. best val AUROC 0.9190, train 1271s, latency 10.4 ms
+[abl_no_prov] train 19206 (poison 14377, active 3506 of 18554 defined), val 4136; mean len 283, max 512
+[abl_no_prov] ep 0 step 100/2402 67s
+[abl_no_prov] ep 0 step 200/2402 136s
+[abl_no_prov] ep 0 step 300/2402 201s
+[abl_no_prov] ep 0 step 400/2402 273s
+[abl_no_prov] ep 0 step 500/2402 342s
+[abl_no_prov] ep 0 step 600/2402 410s
+[abl_no_prov] ep 0 step 700/2402 478s
+[abl_no_prov] ep 0 step 800/2402 548s
+[abl_no_prov] ep 0 step 900/2402 614s
+[abl_no_prov] ep 0 step 1000/2402 681s
+[abl_no_prov] ep 0 step 1100/2402 750s
+[abl_no_prov] ep 0 step 1200/2402 815s
+[abl_no_prov] epoch 0 val AUROC {'poison': 0.9999936599945658, 'active': 0.9999851923040025, 'mean': 0.9999894261492841} (841s)
+[abl_no_prov] ep 1 step 1300/2402 908s
+[abl_no_prov] ep 1 step 1400/2402 979s
+[abl_no_prov] ep 1 step 1500/2402 1046s
+[abl_no_prov] ep 1 step 1600/2402 1115s
+[abl_no_prov] ep 1 step 1700/2402 1181s
+[abl_no_prov] ep 1 step 1800/2402 1250s
+[abl_no_prov] ep 1 step 1900/2402 1318s
+[abl_no_prov] ep 1 step 2000/2402 1384s
+[abl_no_prov] ep 1 step 2100/2402 1451s
+[abl_no_prov] ep 1 step 2200/2402 1522s
+[abl_no_prov] ep 1 step 2300/2402 1591s
+[abl_no_prov] ep 1 step 2400/2402 1658s
+[abl_no_prov] epoch 1 val AUROC {'poison': 0.9999993961899586, 'active': 1.0, 'mean': 0.9999996980949792} (1685s)
+[abl_no_prov] done. best val AUROC 1.0000, train 1688s, latency 10.6 ms
+[write_only] train 19206 (poison 14377, active 3506 of 18554 defined), val 4136; mean len 125, max 512
+[write_only] ep 0 step 100/2402 49s
+[write_only] ep 0 step 200/2402 100s
+[write_only] ep 0 step 300/2402 148s
+[write_only] ep 0 step 400/2402 204s
+[write_only] ep 0 step 500/2402 255s
+[write_only] ep 0 step 600/2402 306s
+[write_only] ep 0 step 700/2402 356s
+[write_only] ep 0 step 800/2402 409s
+[write_only] ep 0 step 900/2402 457s
+[write_only] ep 0 step 1000/2402 506s
+[write_only] ep 0 step 1100/2402 559s
+[write_only] ep 0 step 1200/2402 607s
+[write_only] epoch 0 val AUROC {'poison': 0.8327083899405248, 'active': 0.5994737219706998, 'mean': 0.7160910559556123} (617s)
+[write_only] ep 1 step 1300/2402 666s
+[write_only] ep 1 step 1400/2402 720s
+[write_only] ep 1 step 1500/2402 768s
+[write_only] ep 1 step 1600/2402 820s
+[write_only] ep 1 step 1700/2402 868s
+[write_only] ep 1 step 1800/2402 921s
+[write_only] ep 1 step 1900/2402 972s
+[write_only] ep 1 step 2000/2402 1020s
+[write_only] ep 1 step 2100/2402 1071s
+[write_only] ep 1 step 2200/2402 1126s
+[write_only] ep 1 step 2300/2402 1178s
+[write_only] ep 1 step 2400/2402 1227s
+[write_only] epoch 1 val AUROC {'poison': 0.8334296410349304, 'active': 0.5981739816684895, 'mean': 0.71580181135171} (1239s)
+[write_only] done. best val AUROC 0.7161, train 1241s, latency 11.2 ms
+[cpmg_noasb] train 18972 (poison 14260, active 3506 of 18554 defined), val 4050; mean len 284, max 512
+[cpmg_noasb] ep 0 step 100/2372 65s
+[cpmg_noasb] ep 0 step 200/2372 133s
+[cpmg_noasb] ep 0 step 300/2372 200s
+[cpmg_noasb] ep 0 step 400/2372 267s
+[cpmg_noasb] ep 0 step 500/2372 331s
+[cpmg_noasb] ep 0 step 600/2372 395s
+[cpmg_noasb] ep 0 step 700/2372 461s
+[cpmg_noasb] ep 0 step 800/2372 531s
+[cpmg_noasb] ep 0 step 900/2372 599s
+[cpmg_noasb] ep 0 step 1000/2372 667s
+[cpmg_noasb] ep 0 step 1100/2372 735s
+[cpmg_noasb] epoch 0 val AUROC {'poison': 0.9999899563211566, 'active': 0.9998052058019473, 'mean': 0.999897581061552} (815s)
+[cpmg_noasb] ep 1 step 1200/2372 827s
+[cpmg_noasb] ep 1 step 1300/2372 896s
+[cpmg_noasb] ep 1 step 1400/2372 965s
+[cpmg_noasb] ep 1 step 1500/2372 1028s
+[cpmg_noasb] ep 1 step 1600/2372 1094s
+[cpmg_noasb] ep 1 step 1700/2372 1163s
+[cpmg_noasb] ep 1 step 1800/2372 1226s
+[cpmg_noasb] ep 1 step 1900/2372 1291s
+[cpmg_noasb] ep 1 step 2000/2372 1360s
+[cpmg_noasb] ep 1 step 2100/2372 1425s
+[cpmg_noasb] ep 1 step 2200/2372 1493s
+[cpmg_noasb] ep 1 step 2300/2372 1561s
+[cpmg_noasb] epoch 1 val AUROC {'poison': 0.9999955361427364, 'active': 0.9999918661951563, 'mean': 0.9999937011689464} (1631s)
+[cpmg_noasb] done. best val AUROC 1.0000, train 1634s, latency 10.5 ms
+[cpmg_noehr] train 17826 (poison 13273, active 3230 of 17174 defined), val 3936; mean len 270, max 512
+[cpmg_noehr] ep 0 step 100/2230 52s
+[cpmg_noehr] ep 0 step 200/2230 106s
+[cpmg_noehr] ep 0 step 300/2230 160s
+[cpmg_noehr] ep 0 step 400/2230 212s
+[cpmg_noehr] ep 0 step 500/2230 267s
+[cpmg_noehr] ep 0 step 600/2230 320s
+[cpmg_noehr] ep 0 step 700/2230 375s
+[cpmg_noehr] ep 0 step 800/2230 428s
+[cpmg_noehr] ep 0 step 900/2230 480s
+[cpmg_noehr] ep 0 step 1000/2230 535s
+[cpmg_noehr] ep 0 step 1100/2230 588s
+[cpmg_noehr] epoch 0 val AUROC {'poison': 0.9999880910636665, 'active': 0.9999951295132019, 'mean': 0.9999916102884342} (617s)
+[cpmg_noehr] ep 1 step 1200/2230 666s
+[cpmg_noehr] ep 1 step 1300/2230 721s
+[cpmg_noehr] ep 1 step 1400/2230 776s
+[cpmg_noehr] ep 1 step 1500/2230 828s
+[cpmg_noehr] ep 1 step 1600/2230 883s
+[cpmg_noehr] ep 1 step 1700/2230 936s
+[cpmg_noehr] ep 1 step 1800/2230 988s
+[cpmg_noehr] ep 1 step 1900/2230 1042s
+[cpmg_noehr] ep 1 step 2000/2230 1096s
+[cpmg_noehr] ep 1 step 2100/2230 1149s
+[cpmg_noehr] ep 1 step 2200/2230 1204s
+[cpmg_noehr] epoch 1 val AUROC {'poison': 1.0, 'active': 1.0, 'mean': 1.0} (1241s)
+[cpmg_noehr] done. best val AUROC 1.0000, train 1244s, latency 10.6 ms
+[cpmg_full_s43] train 19206 (poison 14377, active 3506 of 18554 defined), val 4136; mean len 287, max 512
+[cpmg_full_s43] ep 0 step 100/2402 67s
+[cpmg_full_s43] ep 0 step 200/2402 139s
+[cpmg_full_s43] ep 0 step 300/2402 206s
+[cpmg_full_s43] ep 0 step 400/2402 277s
+[cpmg_full_s43] ep 0 step 500/2402 345s
+[cpmg_full_s43] ep 0 step 600/2402 415s
+[cpmg_full_s43] ep 0 step 700/2402 484s
+[cpmg_full_s43] ep 0 step 800/2402 552s
+[cpmg_full_s43] ep 0 step 900/2402 621s
+[cpmg_full_s43] ep 0 step 1000/2402 693s
+[cpmg_full_s43] ep 0 step 1100/2402 764s
+[cpmg_full_s43] ep 0 step 1200/2402 832s
+[cpmg_full_s43] epoch 0 val AUROC {'poison': 0.9999687528303596, 'active': 1.0, 'mean': 0.9999843764151798} (859s)
+[cpmg_full_s43] ep 1 step 1300/2402 928s
+[cpmg_full_s43] ep 1 step 1400/2402 998s
+[cpmg_full_s43] ep 1 step 1500/2402 1065s
+[cpmg_full_s43] ep 1 step 1600/2402 1136s
+[cpmg_full_s43] ep 1 step 1700/2402 1208s
+[cpmg_full_s43] ep 1 step 1800/2402 1274s
+[cpmg_full_s43] ep 1 step 1900/2402 1344s
+[cpmg_full_s43] ep 1 step 2000/2402 1415s
+[cpmg_full_s43] ep 1 step 2100/2402 1482s
+[cpmg_full_s43] ep 1 step 2200/2402 1552s
+[cpmg_full_s43] ep 1 step 2300/2402 1623s
+[cpmg_full_s43] ep 1 step 2400/2402 1690s
+[cpmg_full_s43] epoch 1 val AUROC {'poison': 0.9999817347462489, 'active': 0.9999999999999999, 'mean': 0.9999908673731244} (1718s)
+[cpmg_full_s43] done. best val AUROC 1.0000, train 1720s, latency 10.6 ms
+[content_only_s43] train 19206 (poison 14377, active 3506 of 18554 defined), val 4136; mean len 110, max 512
+[content_only_s43] ep 0 step 100/2402 47s
+[content_only_s43] ep 0 step 200/2402 99s
+[content_only_s43] ep 0 step 300/2402 145s
+[content_only_s43] ep 0 step 400/2402 196s
+[content_only_s43] ep 0 step 500/2402 243s
+[content_only_s43] ep 0 step 600/2402 295s
+[content_only_s43] ep 0 step 700/2402 345s
+[content_only_s43] ep 0 step 800/2402 391s
+[content_only_s43] ep 0 step 900/2402 441s
+[content_only_s43] ep 0 step 1000/2402 495s
+[content_only_s43] ep 0 step 1100/2402 546s
+[content_only_s43] ep 0 step 1200/2402 595s
+[content_only_s43] epoch 0 val AUROC {'poison': 0.8315305075023398, 'active': 0.5984816063388618, 'mean': 0.7150060569206008} (604s)
+[content_only_s43] ep 1 step 1300/2402 655s
+[content_only_s43] ep 1 step 1400/2402 703s
+[content_only_s43] ep 1 step 1500/2402 750s
+[content_only_s43] ep 1 step 1600/2402 801s
+[content_only_s43] ep 1 step 1700/2402 854s
+[content_only_s43] ep 1 step 1800/2402 900s
+[content_only_s43] ep 1 step 1900/2402 950s
+[content_only_s43] ep 1 step 2000/2402 1002s
+[content_only_s43] ep 1 step 2100/2402 1049s
+[content_only_s43] ep 1 step 2200/2402 1101s
+[content_only_s43] ep 1 step 2300/2402 1152s
+[content_only_s43] ep 1 step 2400/2402 1200s
+[content_only_s43] epoch 1 val AUROC {'poison': 0.8323835401382725, 'active': 0.59730929564587, 'mean': 0.7148464178920713} (1209s)
+[content_only_s43] done. best val AUROC 0.7150, train 1211s, latency 10.3 ms
+[abl_no_prov_s43] train 19206 (poison 14377, active 3506 of 18554 defined), val 4136; mean len 283, max 512
+[abl_no_prov_s43] ep 0 step 100/2402 66s
+[abl_no_prov_s43] ep 0 step 200/2402 136s
+[abl_no_prov_s43] ep 0 step 300/2402 203s
+[abl_no_prov_s43] ep 0 step 400/2402 272s
+[abl_no_prov_s43] ep 0 step 500/2402 338s
+[abl_no_prov_s43] ep 0 step 600/2402 407s
+[abl_no_prov_s43] ep 0 step 700/2402 474s
+[abl_no_prov_s43] ep 0 step 800/2402 540s
+[abl_no_prov_s43] ep 0 step 900/2402 608s
+[abl_no_prov_s43] ep 0 step 1000/2402 679s
+[abl_no_prov_s43] ep 0 step 1100/2402 748s
+[abl_no_prov_s43] ep 0 step 1200/2402 815s
+[abl_no_prov_s43] epoch 0 val AUROC {'poison': 0.9999679980678078, 'active': 0.9999699674898078, 'mean': 0.9999689827788079} (841s)
+[abl_no_prov_s43] ep 1 step 1300/2402 909s
+[abl_no_prov_s43] ep 1 step 1400/2402 978s
+[abl_no_prov_s43] ep 1 step 1500/2402 1043s
+[abl_no_prov_s43] ep 1 step 1600/2402 1113s
+[abl_no_prov_s43] ep 1 step 1700/2402 1184s
+[abl_no_prov_s43] ep 1 step 1800/2402 1249s
+[abl_no_prov_s43] ep 1 step 1900/2402 1317s
+[abl_no_prov_s43] ep 1 step 2000/2402 1387s
+[abl_no_prov_s43] ep 1 step 2100/2402 1452s
+[abl_no_prov_s43] ep 1 step 2200/2402 1521s
+[abl_no_prov_s43] ep 1 step 2300/2402 1590s
+[abl_no_prov_s43] ep 1 step 2400/2402 1656s
+[abl_no_prov_s43] epoch 1 val AUROC {'poison': 0.9999906409443589, 'active': 1.0, 'mean': 0.9999953204721794} (1682s)
+[abl_no_prov_s43] done. best val AUROC 1.0000, train 1685s, latency 10.5 ms
+[cpmg_full_s44] train 19206 (poison 14377, active 3506 of 18554 defined), val 4136; mean len 287, max 512
+[cpmg_full_s44] ep 0 step 100/2402 67s
+[cpmg_full_s44] ep 0 step 200/2402 135s
+[cpmg_full_s44] ep 0 step 300/2402 201s
+[cpmg_full_s44] ep 0 step 400/2402 271s
+[cpmg_full_s44] ep 0 step 500/2402 342s
+[cpmg_full_s44] ep 0 step 600/2402 408s
+[cpmg_full_s44] ep 0 step 700/2402 477s
+[cpmg_full_s44] ep 0 step 800/2402 547s
+[cpmg_full_s44] ep 0 step 900/2402 612s
+[cpmg_full_s44] ep 0 step 1000/2402 681s
+[cpmg_full_s44] ep 0 step 1100/2402 751s
+[cpmg_full_s44] ep 0 step 1200/2402 817s
+[cpmg_full_s44] epoch 0 val AUROC {'poison': 0.99997343235818, 'active': 1.0, 'mean': 0.9999867161790901} (843s)
+[cpmg_full_s44] ep 1 step 1300/2402 912s
+[cpmg_full_s44] ep 1 step 1400/2402 978s
+[cpmg_full_s44] ep 1 step 1500/2402 1045s
+[cpmg_full_s44] ep 1 step 1600/2402 1114s
+[cpmg_full_s44] ep 1 step 1700/2402 1184s
+[cpmg_full_s44] ep 1 step 1800/2402 1250s
+[cpmg_full_s44] ep 1 step 1900/2402 1317s
+[cpmg_full_s44] ep 1 step 2000/2402 1385s
+[cpmg_full_s44] ep 1 step 2100/2402 1451s
+[cpmg_full_s44] ep 1 step 2200/2402 1522s
+[cpmg_full_s44] ep 1 step 2300/2402 1590s
+[cpmg_full_s44] ep 1 step 2400/2402 1658s
+[cpmg_full_s44] epoch 1 val AUROC {'poison': 0.9999948676146484, 'active': 1.0, 'mean': 0.9999974338073242} (1685s)
+[cpmg_full_s44] done. best val AUROC 1.0000, train 1688s, latency 10.7 ms
+[content_only_s44] train 19206 (poison 14377, active 3506 of 18554 defined), val 4136; mean len 110, max 512
+[content_only_s44] ep 0 step 100/2402 49s
+[content_only_s44] ep 0 step 200/2402 97s
+[content_only_s44] ep 0 step 300/2402 144s
+[content_only_s44] ep 0 step 400/2402 195s
+[content_only_s44] ep 0 step 500/2402 248s
+[content_only_s44] ep 0 step 600/2402 294s
+[content_only_s44] ep 0 step 700/2402 344s
+[content_only_s44] ep 0 step 800/2402 396s
+[content_only_s44] ep 0 step 900/2402 442s
+[content_only_s44] ep 0 step 1000/2402 494s
+[content_only_s44] ep 0 step 1100/2402 546s
+[content_only_s44] ep 0 step 1200/2402 593s
+[content_only_s44] epoch 0 val AUROC {'poison': 0.8313306463786494, 'active': 0.5974763514838145, 'mean': 0.714403498931232} (602s)
+[content_only_s44] ep 1 step 1300/2402 654s
+[content_only_s44] ep 1 step 1400/2402 700s
+[content_only_s44] ep 1 step 1500/2402 749s
+[content_only_s44] ep 1 step 1600/2402 798s
+[content_only_s44] ep 1 step 1700/2402 850s
+[content_only_s44] ep 1 step 1800/2402 896s
+[content_only_s44] ep 1 step 1900/2402 942s
+[content_only_s44] ep 1 step 2000/2402 991s
+[content_only_s44] ep 1 step 2100/2402 1040s
+[content_only_s44] ep 1 step 2200/2402 1092s
+[content_only_s44] ep 1 step 2300/2402 1141s
+[content_only_s44] ep 1 step 2400/2402 1189s
+[content_only_s44] epoch 1 val AUROC {'poison': 0.8335531201883888, 'active': 0.5979353900597397, 'mean': 0.7157442551240643} (1199s)
+[content_only_s44] done. best val AUROC 0.7157, train 1202s, latency 10.3 ms
+[abl_no_prov_s44] train 19206 (poison 14377, active 3506 of 18554 defined), val 4136; mean len 283, max 512
+[abl_no_prov_s44] ep 0 step 100/2402 67s
+[abl_no_prov_s44] ep 0 step 200/2402 135s
+[abl_no_prov_s44] ep 0 step 300/2402 200s
+[abl_no_prov_s44] ep 0 step 400/2402 270s
+[abl_no_prov_s44] ep 0 step 500/2402 340s
+[abl_no_prov_s44] ep 0 step 600/2402 405s
+[abl_no_prov_s44] ep 0 step 700/2402 474s
+[abl_no_prov_s44] ep 0 step 800/2402 543s
+[abl_no_prov_s44] ep 0 step 900/2402 608s
+[abl_no_prov_s44] ep 0 step 1000/2402 677s
+[abl_no_prov_s44] ep 0 step 1100/2402 746s
+[abl_no_prov_s44] ep 0 step 1200/2402 812s
+[abl_no_prov_s44] epoch 0 val AUROC {'poison': 0.9999779609334905, 'active': 1.0, 'mean': 0.9999889804667452} (838s)
+[abl_no_prov_s44] ep 1 step 1300/2402 906s
+[abl_no_prov_s44] ep 1 step 1400/2402 972s
+[abl_no_prov_s44] ep 1 step 1500/2402 1038s
+[abl_no_prov_s44] ep 1 step 1600/2402 1107s
+[abl_no_prov_s44] ep 1 step 1700/2402 1177s
+[abl_no_prov_s44] ep 1 step 1800/2402 1242s
+[abl_no_prov_s44] ep 1 step 1900/2402 1309s
+[abl_no_prov_s44] ep 1 step 2000/2402 1376s
+[abl_no_prov_s44] ep 1 step 2100/2402 1442s
+[abl_no_prov_s44] ep 1 step 2200/2402 1512s
+[abl_no_prov_s44] ep 1 step 2300/2402 1580s
+[abl_no_prov_s44] ep 1 step 2400/2402 1647s
+[abl_no_prov_s44] epoch 1 val AUROC {'poison': 0.9999951695196692, 'active': 1.0, 'mean': 0.9999975847598346} (1674s)
+[abl_no_prov_s44] done. best val AUROC 1.0000, train 1677s, latency 10.9 ms
 ALL TRAINING DONE

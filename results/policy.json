@@ -53,12 +53,12 @@
    }
   },
   "totals": {
-   "label=1|records": 816,
-   "label=1|protected_action": 119,
-   "label=1|blocked": 39,
    "label=0|records": 648,
    "label=0|protected_action": 38,
-   "label=0|blocked": 38
+   "label=0|blocked": 38,
+   "label=1|records": 816,
+   "label=1|protected_action": 119,
+   "label=1|blocked": 39
   }
  },
  "asb_xsource": {

@@ -1,0 +1,48 @@
+{
+ "name": "abl_no_prov_s43",
+ "config": {
+  "name": "abl_no_prov",
+  "variant": "no_prov",
+  "seed": 43,
+  "max_len": 512,
+  "batch_size": 8,
+  "grad_accum": 2,
+  "lr": 2e-05,
+  "weight_decay": 0.01,
+  "warmup": 0.1,
+  "epochs": 2,
+  "grad_ckpt": true
+ },
+ "limit": null,
+ "n_train": 19206,
+ "n_val": 4136,
+ "best_val_auroc": 0.9999953204721794,
+ "history": [
+  {
+   "epoch": 0,
+   "val_auroc": 0.9999689827788079,
+   "val": {
+    "poison": 0.9999679980678078,
+    "active": 0.9999699674898078,
+    "mean": 0.9999689827788079
+   },
+   "elapsed_s": 841.0134220123291
+  },
+  {
+   "epoch": 1,
+   "val_auroc": 0.9999953204721794,
+   "val": {
+    "poison": 0.9999906409443589,
+    "active": 1.0,
+    "mean": 0.9999953204721794
+   },
+   "elapsed_s": 1682.186233997345
+  }
+ ],
+ "train_seconds": 1685.2592062950134,
+ "latency_ms_bs1": 10.546199083328247,
+ "n_params": 184362242,
+ "gpu": "NVIDIA GeForce RTX 5060 Laptop GPU",
+ "torch": "2.14.1+cu130",
+ "data_version": "v2"
+}

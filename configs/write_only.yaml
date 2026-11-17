@@ -9,3 +9,4 @@ weight_decay: 0.01
 warmup: 0.1
 epochs: 2
 grad_ckpt: true
+prov_dropout: 0.15

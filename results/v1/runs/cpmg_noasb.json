@@ -1,0 +1,40 @@
+{
+ "name": "cpmg_noasb",
+ "config": {
+  "name": "cpmg_noasb",
+  "variant": "full",
+  "exclude_sources": [
+   "ASB"
+  ],
+  "seed": 42,
+  "max_len": 512,
+  "batch_size": 8,
+  "grad_accum": 2,
+  "lr": 2e-05,
+  "weight_decay": 0.01,
+  "warmup": 0.1,
+  "epochs": 2,
+  "grad_ckpt": true
+ },
+ "limit": null,
+ "n_train": 6710,
+ "n_val": 1348,
+ "best_val_auroc": 0.9632190613454125,
+ "history": [
+  {
+   "epoch": 0,
+   "val_auroc": 0.960083730825984,
+   "elapsed_s": 285.8665964603424
+  },
+  {
+   "epoch": 1,
+   "val_auroc": 0.9632190613454125,
+   "elapsed_s": 565.611088514328
+  }
+ ],
+ "train_seconds": 566.6619920730591,
+ "latency_ms_bs1": 10.59107780456543,
+ "n_params": 184362242,
+ "gpu": "NVIDIA GeForce RTX 5060 Laptop GPU",
+ "torch": "2.14.1+cu130"
+}

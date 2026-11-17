@@ -1,0 +1,49 @@
+{
+ "name": "cpmg_full_s43",
+ "config": {
+  "name": "cpmg_full",
+  "variant": "full",
+  "seed": 43,
+  "max_len": 512,
+  "batch_size": 8,
+  "grad_accum": 2,
+  "lr": 2e-05,
+  "weight_decay": 0.01,
+  "warmup": 0.1,
+  "epochs": 2,
+  "grad_ckpt": true,
+  "prov_dropout": 0.15
+ },
+ "limit": null,
+ "n_train": 19206,
+ "n_val": 4136,
+ "best_val_auroc": 0.9999908673731244,
+ "history": [
+  {
+   "epoch": 0,
+   "val_auroc": 0.9999843764151798,
+   "val": {
+    "poison": 0.9999687528303596,
+    "active": 1.0,
+    "mean": 0.9999843764151798
+   },
+   "elapsed_s": 858.7419877052307
+  },
+  {
+   "epoch": 1,
+   "val_auroc": 0.9999908673731244,
+   "val": {
+    "poison": 0.9999817347462489,
+    "active": 0.9999999999999999,
+    "mean": 0.9999908673731244
+   },
+   "elapsed_s": 1717.5162308216095
+  }
+ ],
+ "train_seconds": 1720.479835987091,
+ "latency_ms_bs1": 10.58161735534668,
+ "n_params": 184362242,
+ "gpu": "NVIDIA GeForce RTX 5060 Laptop GPU",
+ "torch": "2.14.1+cu130",
+ "data_version": "v2"
+}

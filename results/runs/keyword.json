@@ -1,6 +1,6 @@
 {
  "name": "keyword",
- "latency_ms_bs1": 0.1265096664428711,
+ "latency_ms_bs1": 0.1167595386505127,
  "n_params": 0,
  "n_patterns": 18,
  "device": "cpu",

@@ -14,24 +14,35 @@
   "grad_ckpt": true
  },
  "limit": null,
- "n_train": 6944,
- "n_val": 1434,
- "best_val_auroc": 0.8256377181402538,
+ "n_train": 19206,
+ "n_val": 4136,
+ "best_val_auroc": 0.7150046004878701,
  "history": [
   {
    "epoch": 0,
-   "val_auroc": 0.8241465564427845,
-   "elapsed_s": 212.5260682106018
+   "val_auroc": 0.7150046004878701,
+   "val": {
+    "poison": 0.8312337348670108,
+    "active": 0.5987754661087294,
+    "mean": 0.7150046004878701
+   },
+   "elapsed_s": 603.1152565479279
   },
   {
    "epoch": 1,
-   "val_auroc": 0.8256377181402538,
-   "elapsed_s": 428.78268909454346
+   "val_auroc": 0.7144484629270031,
+   "val": {
+    "poison": 0.831354044017752,
+    "active": 0.5975428818362543,
+    "mean": 0.7144484629270031
+   },
+   "elapsed_s": 1210.4720005989075
   }
  ],
- "train_seconds": 429.8050558567047,
- "latency_ms_bs1": 10.430177450180054,
+ "train_seconds": 1212.5393061637878,
+ "latency_ms_bs1": 10.434459447860718,
  "n_params": 184362242,
  "gpu": "NVIDIA GeForce RTX 5060 Laptop GPU",
- "torch": "2.14.1+cu130"
+ "torch": "2.14.1+cu130",
+ "data_version": "v2"
 }

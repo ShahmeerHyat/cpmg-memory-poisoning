@@ -1,0 +1,36 @@
+% Figure 2: CPMG input, model and outputs (single column).
+\begin{tikzpicture}[x=1cm,y=1cm]
+% input strip
+\node[seg, draw=cblue, fill=cblueL, minimum width=1.25cm] (prov) at (0.62,0) {prov.};
+\node[seg, minimum width=1.78cm, right=1pt of prov] (mem) {memory};
+\node[seg, minimum width=0.95cm, right=1pt of mem] (src) {source};
+\node[seg, minimum width=0.9cm, right=1pt of src] (qry) {query};
+\node[seg, minimum width=0.72cm, right=1pt of qry] (n1) {nbr$_1$};
+\node[seg, minimum width=0.72cm, right=1pt of n1] (n2) {nbr$_2$};
+\node[seg, minimum width=0.72cm, right=1pt of n2] (n3) {nbr$_3$};
+% braces
+\draw[decorate, decoration={brace, amplitude=4pt}, line width=0.6pt, cink2] ($(prov.north west)+(0,0.08)$) -- ($(src.north east)+(0,0.08)$)
+  node[midway, above=4pt, lab] {write checkpoint};
+\draw[decorate, decoration={brace, amplitude=4pt}, line width=0.6pt, cink2] ($(qry.north west)+(0,0.08)$) -- ($(n3.north east)+(0,0.08)$)
+  node[midway, above=4pt, lab] {added at retrieval};
+\node[lab, anchor=north, text width=1.3cm] at ($(prov.south)+(0,-0.05)$) {channel, authority, age, parent};
+\node[lab, anchor=north, text width=1.7cm] at ($(mem.south)+(0,-0.05)$) {the record\\being scored};
+\node[lab, anchor=north, text width=1.0cm] at ($(src.south)+(0,-0.05)$) {where it came from};
+\node[lab, anchor=north, text width=0.95cm] at ($(qry.south)+(0,-0.05)$) {current query or action};
+\node[lab, anchor=north, text width=2.2cm] at ($(n2.south)+(0,-0.05)$) {co-retrieved records};
+% encoder
+\node[sys, minimum width=7.35cm, minimum height=0.62cm, align=center, anchor=north west] (enc) at ($(prov.south west)+(0,-1.42)$)
+  {\textbf{DeBERTa-v3-base cross-encoder} \ (one forward pass, $\approx$10\,ms)};
+\draw[arr] ($(enc.north)+(0,0.3)$) -- (enc.north);
+% outputs
+\node[rec, draw=cblue, fill=white, line width=0.9pt, text width=3.3cm, anchor=north west, align=left] (po) at ($(enc.south west)+(0,-0.4)$)
+  {\textbf{Poison score}\\Is attacker-written content in the record or its neighbours?};
+\node[rec, draw=cblue, fill=white, line width=0.9pt, text width=3.3cm, anchor=north east, align=left] (ac) at ($(enc.south east)+(0,-0.4)$)
+  {\textbf{Activation score}\\Does this query carry the trigger that content waits for?};
+\draw[arr] (po.north |- enc.south) -- (po.north);
+\draw[arr] (ac.north |- enc.south) -- (ac.north);
+% policy
+\node[pol, text width=7.08cm, anchor=north west, align=left] (pol) at ($(po.south west)+(0,-0.3)$)
+  {\textbf{Authority policy} (deterministic, no model): a record whose source is \emph{external} or \emph{unknown}
+   can never authorise a payment, data sharing, a settings change or a deletion.};
+\end{tikzpicture}

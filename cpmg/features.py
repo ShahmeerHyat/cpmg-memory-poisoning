@@ -41,10 +41,24 @@ def _ids(tok, text, n):
     return tok(text, add_special_tokens=False, truncation=True, max_length=n)["input_ids"]
 
 
-def encode(ex, tok, variant, max_len):
+# Provenance tuples that occur in training (D4), in a fixed cycle. Used by the counterfactual swap test (D25).
+PROV_CYCLE = [("web", "external", "kb_retrieval"), ("tool", "internal", "code_exec"), ("tool", "user", "agent_plan"),
+              ("doc", "external", "setup_script"), ("unknown", "unknown", "unknown")]
+
+
+def swap_prov(ex):
+    """Same record with the provenance of the next source in PROV_CYCLE (content unchanged)."""
+    t = (ex["channel"], ex["authority"], ex["parent"])
+    if t not in PROV_CYCLE:
+        return ex
+    ch, au, pa = PROV_CYCLE[(PROV_CYCLE.index(t) + 1) % len(PROV_CYCLE)]
+    return dict(ex, channel=ch, authority=au, parent=pa)
+
+
+def encode(ex, tok, variant, max_len, drop_prov=False):
     v = VARIANTS[variant]
     cls, sep = tok.cls_token_id, tok.sep_token_id
-    prov = tok.convert_tokens_to_ids(prov_tokens(ex)) if v["prov"] else []
+    prov = tok.convert_tokens_to_ids(prov_tokens(ex)) if (v["prov"] and not drop_prov) else []
     tail = []
     if v["source"]:
         tail += _ids(tok, ex["source"], BUDGET["source"]) + [sep]

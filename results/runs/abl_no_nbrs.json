@@ -11,27 +11,39 @@
   "weight_decay": 0.01,
   "warmup": 0.1,
   "epochs": 2,
-  "grad_ckpt": true
+  "grad_ckpt": true,
+  "prov_dropout": 0.15
  },
  "limit": null,
- "n_train": 6944,
- "n_val": 1434,
- "best_val_auroc": 0.8535039281344581,
+ "n_train": 19206,
+ "n_val": 4136,
+ "best_val_auroc": 0.9190215254683183,
  "history": [
   {
    "epoch": 0,
-   "val_auroc": 0.8483945360293643,
-   "elapsed_s": 224.04274702072144
+   "val_auroc": 0.9168545943162245,
+   "val": {
+    "poison": 0.8931481146031457,
+    "active": 0.9405610740293034,
+    "mean": 0.9168545943162245
+   },
+   "elapsed_s": 632.1595420837402
   },
   {
    "epoch": 1,
-   "val_auroc": 0.8535039281344581,
-   "elapsed_s": 452.35828399658203
+   "val_auroc": 0.9190215254683183,
+   "val": {
+    "poison": 0.8955767895420101,
+    "active": 0.9424662613946263,
+    "mean": 0.9190215254683183
+   },
+   "elapsed_s": 1268.5263097286224
   }
  ],
- "train_seconds": 453.4591965675354,
- "latency_ms_bs1": 10.095943212509155,
+ "train_seconds": 1271.480856180191,
+ "latency_ms_bs1": 10.380958318710327,
  "n_params": 184362242,
  "gpu": "NVIDIA GeForce RTX 5060 Laptop GPU",
- "torch": "2.14.1+cu130"
+ "torch": "2.14.1+cu130",
+ "data_version": "v2"
 }

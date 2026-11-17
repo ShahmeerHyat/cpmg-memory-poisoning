@@ -1,30 +1,51 @@
 {
  "train": {
-  "n": 6944,
-  "pos": 2987,
-  "neg": 3957,
-  "groups": 2172,
+  "n": 19206,
+  "pos": 14377,
+  "neg": 4829,
+  "groups": 3046,
   "by_level_label": {
-   "L1|0": 1177,
-   "L1|1": 1231,
-   "L2|0": 878,
-   "L2|1": 878,
-   "L3|0": 878,
-   "L3|1": 878,
-   "bg|0": 1024
+   "L1|0": 2052,
+   "L1|1": 2106,
+   "L2|1": 1753,
+   "L23|1": 5259,
+   "L3|1": 5259,
+   "bg|0": 1024,
+   "bgq|0": 1753
   },
+  "by_variant": {
+   "L1_pos": 2106,
+   "L1_twin": 1753,
+   "L2_pos": 1753,
+   "L3_pos": 1753,
+   "L3_mis": 1753,
+   "L23_ovl": 1753,
+   "trig_only": 1753,
+   "L23_mis": 1753,
+   "L23_pos": 1753,
+   "L3_ovl": 1753,
+   "bg": 1024,
+   "L1_neg": 299
+  },
+  "by_trigger_kind": {
+   "random_vocab": 935,
+   "random_span": 818
+  },
+  "by_real_trigger": {},
+  "n_unique_triggers": 1753,
   "by_source_label": {
    "ASB|0": 117,
    "ASB|1": 117,
-   "AgentPoison|0": 3658,
-   "AgentPoison|1": 2634,
+   "AgentPoison|0": 4530,
+   "AgentPoison|1": 14024,
    "MemoryGraft|0": 66,
    "MemoryGraft|1": 5,
    "memshield-bench|0": 116,
    "memshield-bench|1": 231
   },
   "by_family": {
-   "agentpoison_ap": 2634,
+   "ap_random_vocab": 7480,
+   "ap_random_span": 6544,
    "memshield_T5_backdoor_trigger": 107,
    "asb_context_ignoring": 29,
    "asb_combined_attack": 25,
@@ -32,9 +53,9 @@
    "asb_escape_characters": 21,
    "memshield_T1_instruction_override": 20,
    "asb_fake_completion": 17,
-   "memshield_T2_data_exfiltration": 16,
    "memshield_T9_security_degradation": 16,
    "memshield_T4_factual_manipulation": 16,
+   "memshield_T2_data_exfiltration": 16,
    "memshield_T7_recommendation_poisoning": 14,
    "memshield_T10_c2_persistence": 12,
    "memshield_T6_experience_poisoning": 11,
@@ -45,99 +66,152 @@
   "by_provenance_label": {
    "doc/external|0": 66,
    "doc/external|1": 5,
-   "tool/internal|0": 210,
-   "tool/internal|1": 210,
+   "tool/internal|0": 276,
+   "tool/internal|1": 1104,
    "tool/user|0": 117,
    "tool/user|1": 117,
    "unknown/unknown|0": 116,
    "unknown/unknown|1": 231,
-   "web/external|0": 3448,
-   "web/external|1": 2424
+   "web/external|0": 4254,
+   "web/external|1": 12920
   }
  },
  "test": {
-  "n": 2900,
-  "pos": 1534,
-  "neg": 1366,
+  "n": 4336,
+  "pos": 3329,
+  "neg": 1007,
   "groups": 640,
   "by_level_label": {
    "L1|0": 435,
    "L1|1": 816,
-   "L2|0": 359,
    "L2|1": 359,
-   "L3|0": 359,
-   "L3|1": 359,
-   "bg|0": 213
+   "L23|1": 1077,
+   "L3|1": 1077,
+   "bg|0": 213,
+   "bgq|0": 359
   },
+  "by_variant": {
+   "L1_pos": 816,
+   "L23_pos": 359,
+   "trig_only": 359,
+   "L1_twin": 359,
+   "L23_ovl": 359,
+   "L23_mis": 359,
+   "L2_pos": 359,
+   "L3_mis": 359,
+   "L3_ovl": 359,
+   "L3_pos": 359,
+   "bg": 213,
+   "L1_neg": 76
+  },
+  "by_trigger_kind": {
+   "real": 188,
+   "random_vocab": 90,
+   "random_span": 81
+  },
+  "by_real_trigger": {
+   "ap_real_ap_long": 46,
+   "ap_real_seed_qa": 45,
+   "ap_real_ap": 34,
+   "ap_real_badchain": 32,
+   "ap_real_seed_ad": 31
+  },
+  "n_unique_triggers": 176,
   "by_source_label": {
    "ASB|0": 39,
    "ASB|1": 400,
-   "AgentPoison|0": 1290,
-   "AgentPoison|1": 1077,
+   "AgentPoison|0": 931,
+   "AgentPoison|1": 2872,
    "MemoryGraft|0": 12,
    "MemoryGraft|1": 3,
    "memshield-bench|0": 25,
    "memshield-bench|1": 54
   },
   "by_family": {
-   "agentpoison_ap": 585,
-   "badchain": 492,
+   "ap_random_vocab": 720,
+   "ap_random_span": 648,
+   "ap_real_ap_long": 368,
+   "ap_real_seed_qa": 360,
+   "ap_real_ap": 272,
+   "ap_real_badchain": 256,
+   "ap_real_seed_ad": 248,
    "asb_combined_attack": 83,
    "asb_context_ignoring": 80,
+   "asb_escape_characters": 79,
    "asb_naive": 79,
    "asb_fake_completion": 79,
-   "asb_escape_characters": 79,
    "memshield_T5_backdoor_trigger": 23,
    "memshield_T3_behavioral_drift": 6,
    "memshield_T8_configuration_poisoning": 5,
+   "memshield_T4_factual_manipulation": 4,
    "memshield_T9_security_degradation": 4,
    "memshield_T1_instruction_override": 4,
-   "memshield_T4_factual_manipulation": 4,
-   "memshield_T10_c2_persistence": 3,
-   "memshield_T6_experience_poisoning": 3,
    "memorygraft": 3,
-   "memshield_T2_data_exfiltration": 1,
-   "memshield_T7_recommendation_poisoning": 1
+   "memshield_T6_experience_poisoning": 3,
+   "memshield_T10_c2_persistence": 3,
+   "memshield_T7_recommendation_poisoning": 1,
+   "memshield_T2_data_exfiltration": 1
   },
   "by_provenance_label": {
    "doc/external|0": 12,
    "doc/external|1": 3,
-   "tool/internal|0": 105,
-   "tool/internal|1": 105,
+   "tool/internal|0": 70,
+   "tool/internal|1": 280,
    "tool/user|0": 39,
    "tool/user|1": 400,
    "unknown/unknown|0": 25,
    "unknown/unknown|1": 54,
-   "web/external|0": 1185,
-   "web/external|1": 972
+   "web/external|0": 861,
+   "web/external|1": 2592
   }
  },
  "val": {
-  "n": 1434,
-  "pos": 586,
-  "neg": 848,
-  "groups": 467,
+  "n": 4136,
+  "pos": 3050,
+  "neg": 1086,
+  "groups": 670,
   "by_level_label": {
-   "L1|0": 249,
-   "L1|1": 250,
-   "L2|0": 168,
-   "L2|1": 168,
-   "L3|0": 168,
-   "L3|1": 168,
-   "bg|0": 263
+   "L1|0": 452,
+   "L1|1": 453,
+   "L2|1": 371,
+   "L23|1": 1113,
+   "L3|1": 1113,
+   "bg|0": 263,
+   "bgq|0": 371
   },
+  "by_variant": {
+   "L1_pos": 453,
+   "L23_pos": 371,
+   "trig_only": 371,
+   "L1_twin": 371,
+   "L3_mis": 371,
+   "L23_mis": 371,
+   "L3_ovl": 371,
+   "L3_pos": 371,
+   "L23_ovl": 371,
+   "L2_pos": 371,
+   "bg": 263,
+   "L1_neg": 81
+  },
+  "by_trigger_kind": {
+   "random_vocab": 188,
+   "random_span": 183
+  },
+  "by_real_trigger": {},
+  "n_unique_triggers": 371,
   "by_source_label": {
    "ASB|0": 43,
    "ASB|1": 43,
-   "AgentPoison|0": 767,
-   "AgentPoison|1": 504,
+   "AgentPoison|0": 1005,
+   "AgentPoison|1": 2968,
    "MemoryGraft|0": 22,
    "MemoryGraft|1": 2,
    "memshield-bench|0": 16,
    "memshield-bench|1": 37
   },
   "by_family": {
-   "agentpoison_ap": 504,
+   "ap_random_vocab": 1504,
+   "ap_random_span": 1464,
    "memshield_T5_backdoor_trigger": 20,
    "asb_fake_completion": 10,
    "asb_combined_attack": 10,
@@ -145,11 +219,11 @@
    "asb_naive": 8,
    "asb_context_ignoring": 6,
    "memshield_T9_security_degradation": 4,
-   "memshield_T8_configuration_poisoning": 3,
    "memshield_T4_factual_manipulation": 3,
-   "memshield_T3_behavioral_drift": 2,
-   "memorygraft": 2,
+   "memshield_T8_configuration_poisoning": 3,
    "memshield_T10_c2_persistence": 2,
+   "memorygraft": 2,
+   "memshield_T3_behavioral_drift": 2,
    "memshield_T2_data_exfiltration": 1,
    "memshield_T6_experience_poisoning": 1,
    "memshield_T1_instruction_override": 1
@@ -157,14 +231,14 @@
   "by_provenance_label": {
    "doc/external|0": 22,
    "doc/external|1": 2,
-   "tool/internal|0": 27,
-   "tool/internal|1": 27,
+   "tool/internal|0": 40,
+   "tool/internal|1": 160,
    "tool/user|0": 43,
    "tool/user|1": 43,
    "unknown/unknown|0": 16,
    "unknown/unknown|1": 37,
-   "web/external|0": 740,
-   "web/external|1": 477
+   "web/external|0": 965,
+   "web/external|1": 2808
   }
  },
  "test_asb_xsource": {
@@ -176,6 +250,13 @@
    "L1|0": 199,
    "L1|1": 2012
   },
+  "by_variant": {
+   "L1_pos": 2012,
+   "L1_neg": 199
+  },
+  "by_trigger_kind": {},
+  "by_real_trigger": {},
+  "n_unique_triggers": 0,
   "by_source_label": {
    "ASB|0": 199,
    "ASB|1": 2012
@@ -200,6 +281,12 @@
   "by_level_label": {
    "overdefense|0": 339
   },
+  "by_variant": {
+   "overdefense": 339
+  },
+  "by_trigger_kind": {},
+  "by_real_trigger": {},
+  "n_unique_triggers": 0,
   "by_source_label": {
    "NotInject|0": 339
   },
@@ -210,5 +297,14 @@
  },
  "groups_crossing_splits": 0,
  "test_memories_seen_in_train": 1,
- "heldout_family_in_train_or_val": 0
+ "real_triggers_in_train_or_val": 0,
+ "triggers_shared_train_test": 0,
+ "triggers_shared_train_val": 0,
+ "triggers_shared_val_test": 0,
+ "train_inputs_with_conflicting_labels": 0,
+ "train_duplicate_inputs": 0,
+ "val_inputs_with_conflicting_labels": 0,
+ "val_duplicate_inputs": 0,
+ "test_inputs_with_conflicting_labels": 0,
+ "test_duplicate_inputs": 0
 }

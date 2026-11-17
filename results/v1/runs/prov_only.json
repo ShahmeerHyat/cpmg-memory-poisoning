@@ -1,0 +1,11 @@
+{
+ "name": "prov_only",
+ "latency_ms_bs1": 0.3488802909851074,
+ "n_params": 14,
+ "device": "cpu",
+ "features": [
+  "channel",
+  "authority",
+  "parent"
+ ]
+}

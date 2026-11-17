@@ -1,0 +1,8 @@
+{
+ "name": "keyword",
+ "latency_ms_bs1": 0.1265096664428711,
+ "n_params": 0,
+ "n_patterns": 18,
+ "device": "cpu",
+ "input": "memory text only"
+}

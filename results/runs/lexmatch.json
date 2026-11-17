@@ -1,0 +1,7 @@
+{
+ "name": "lexmatch",
+ "latency_ms_bs1": 0.03504157066345215,
+ "n_params": 0,
+ "device": "cpu",
+ "input": "query, source, memory, neighbours"
+}

@@ -1,9 +1,9 @@
 {
  "name": "tfidf_memory_noasb",
- "latency_ms_bs1": 0.3261899948120117,
- "n_params": 44508,
+ "latency_ms_bs1": 0.31697750091552734,
+ "n_params": 79872,
  "device": "cpu",
- "n_train": 6710,
+ "n_train": 18972,
  "exclude_sources": [
   "ASB"
  ]

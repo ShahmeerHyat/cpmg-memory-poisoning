@@ -38,3 +38,81 @@ Every decision that affects the data, model, or evaluation. Newest at the bottom
 - D19. **NotInject is out of distribution for the context-conditioned models:** its provenance tokens (chat/user) never occur in training and it has no query or neighbours. Its false-rejection rates are reported as indicative only.
 - D20. **Keyword threshold:** the val max-F1 threshold for the keyword filter is 0 matches (flag everything), which is why its FRR is 100%. Reported unchanged (thresholds come from val only).
 - D21. **Supervised contrastive term not added** (optional in CLAUDE.md; no time). Training is weighted cross-entropy only.
+
+---
+
+# Dataset v2 (16 Nov 2026)
+
+The v1 results (everything above, archived in `results/v1/`, `data/processed_v1/`, `checkpoints/v1/`) were submitted on 8 Nov.
+The decisions below replace D7, D11 and D21 where they conflict. D1-D6, D8-D10, D12-D20 still hold.
+
+- D22. **Bug found in v1: conflicting labels.** In v1 every L3 negative ("L3_twin": poisoned memory, neutral query) was the
+  identical input to an L1 positive (same memory, query, neighbours, source), with the opposite label: 878 inputs in train,
+  359 in test. The model was trained and scored on contradictory targets. The v1 L3 numbers, the v1 L3 false-rejection rate
+  (85.8%) and the v1 all-levels numbers (0.941 vs 0.815) are therefore not valid measurements. v1 also contained 878/359
+  duplicate inputs with the same label (L1_twin = L2_twin). v2 has 0 conflicting and 0 duplicate inputs
+  (`data/processed/stats.json`).
+- D23. **Two targets instead of one** (fixes D22). The model has two sigmoid outputs trained with weighted BCE:
+  - `poison`: attacker-written content is in the context (the memory or a co-retrieved neighbour). Defined for every record.
+  - `active`: the query/action carries the trigger that the poisoned content in the context is conditional on. Defined only for
+    AgentPoison records (the only source with a known trigger); masked out of the loss elsewhere.
+  A dormant poisoned record with a neutral query is poison=1, active=0. This keeps the proposal's design (one cross-encoder,
+  risk scored at write and at retrieval) and makes the retrieval-time question explicit. Model selection = mean of the two val AUROCs.
+- D24. **Trigger matching replaces v1's L3** (approved by Shahmeer on 16 Nov 2026; relaxes the no-invented-data rule for
+  training only). v1 had one trigger in training and one held out, so "L3" could only be solved by memorising a string.
+  - Train/val: each AgentPoison group is re-templated (authors' template, D2) with its own unique random trigger: half are
+    random BERT-vocabulary token sequences of 3-8 tokens (the form of AgentPoison's optimised trigger; the tokens of the real
+    triggers are excluded), half are 3-6 word spans cut from real StrategyQA paragraphs that are used nowhere else in the
+    dataset. **These triggers are synthetic.** 1,753 unique triggers in train, 371 in val.
+  - Test: half of the groups carry one of the **five real triggers shipped in the AgentPoison repo** (optimised trigger,
+    earlier optimised trigger left in a comment, BadChain phrase, two seed triggers; file:line in `data/build_dataset.py`),
+    half carry fresh random triggers. No trigger string is shared between train, val and test; no real trigger occurs
+    anywhere in train or val (checked: `real_triggers_in_train_or_val = 0`).
+  - New negatives: `L3_mis` (same poisoned memory, the query carries a *different* trigger from the same pool) and
+    `trig_only` (clean memory, trigger in the query, nothing to activate). A model cannot score these by "is there an odd
+    string in the query"; it has to match the string in the query to the one the record names.
+  - New level `L23` (compositional + dormant): clean memory, payload stored in a neighbour, trigger arrives in the query
+    (`L23_pos`) or a different trigger arrives (`L23_mis`). Needs the neighbours and the query together.
+  - Variants per AgentPoison group: L1_pos, L1_twin, L2_pos, L3_pos, L3_mis, L23_pos, L23_mis, trig_only.
+  - **This replaces D11**: the held-out attack family is now all five real triggers (none is in training), reported
+    separately from fresh random triggers.
+- D25. **Provenance.** (a) Provenance dropout 0.15 in training for every model that sees provenance: the four provenance tokens
+  are removed for 15% of examples each epoch, so the model can score a record whose provenance is unknown to it.
+  (b) Every such model is also scored with provenance removed (`<split>@noprov`) and, on test, with each record's provenance
+  swapped to another source's tuple (`test@provswap`, content unchanged). (c) Provenance is still constant per source (D4), so
+  whether provenance *helps detection* remains untestable on these public datasets; the swap test only measures how much the
+  model relies on it.
+- D26. **Lexical copy rule baseline** (`baselines/lexmatch.py`): share of the extra query tokens that also occur as one
+  contiguous run in the memory or neighbours. No training, no knowledge of the template. Added because the trigger-matching
+  test can in principle be solved by string copying, and the paper must show whether the learned model does more than that.
+- D27. **Seeds:** 42, 43, 44 for CPMG, content-only and CPMG without provenance; seed 42 only for the other runs (time).
+  The dataset (splits, triggers, neighbours) is built once with seed 42; seeds change model initialisation and batch order only.
+- D28. **Dataset v2 size (seed 42):** train 15,700, val 3,394, test 3,618, ASB cross-source 2,211, NotInject 339.
+- D29. **Benign-overlap negatives** (added 16 Nov after the first baseline pass). With wrong-trigger negatives only, the
+  training-free copy rule (D26) scored 1.000 on activation: "the query repeats a string from the context" was enough. New
+  variants `L3_ovl` and `L23_ovl`: same memory and neighbours as the positive, and the query is the question plus a 3-6 word
+  span copied from the record's own clean text (a mechanical transformation of the real record). The copy rule is at 0.500 on
+  these. Final variants per AgentPoison group: L1_pos, L1_twin, L2_pos, L3_pos, L3_mis, L3_ovl, L23_pos, L23_mis, L23_ovl,
+  trig_only. **Final sizes (replaces D28):** train 19,206, val 4,136, test 4,336.
+- D30. **Quoted-copy rule and cross-template run.** `lexquote` (in `baselines/lexmatch.py`) counts only strings the context
+  puts in quotation marks before "in the question". It encodes AgentPoison's two injection sentences, so it is reported as a
+  template-knowledge reference, not a deployable baseline. `cpmg_noehr` = CPMG trained without any EHRAgent record, tested on
+  EHRAgent (35 test groups), to see whether activation transfers to an unseen injection sentence and record format.
+  Result: transfers when the payload is in a neighbour (1.000), fails when it is in the record (0.508), because a poisoned
+  EHRAgent record stores its own triggered question and the model then outputs active=1 whatever the query.
+- D31. **Paraphrase attack** (CLAUDE.md "optional if time"; run 17 Nov). `data/sources/paraphrase_attack.py` rewrites the
+  injected sentence of each of the 359 AgentPoison test groups with a local Qwen3-8B (llama.cpp, temperature 1.0, thinking off).
+  The LLM sees `<<T>>` in place of the trigger. Accepted only if `<<T>>` occurs once, the StrategyQA forced output
+  "I don't know" is kept, and the rewrite shares at most 60% of its word set with the original (Jaccard). Conditions:
+  `test@para` (free rewording) and `test@paranq` (also: trigger not in quotation marks, no "in the question"; quotation marks
+  directly around the marker are stripped mechanically). 359/359 accepted in both; 186 and 148 distinct sentences. Same ids,
+  questions, triggers and neighbours as `test.jsonl`; **no model is retrained**, checkpoints are re-scored with
+  `score_split.py`. A first attempt with a weaker prompt produced near-copies (11 distinct sentences) and almost no accepted
+  no-quote rewrites (2/359); it was discarded and is not reported. Limits: one rewriting model, rewrites stay close to the
+  original meaning, no optimisation against CPMG; 93 of 359 no-quote rewrites still mention the question/query explicitly,
+  the rest say only "the presence of <trigger>".
+- D32. **Authority policy unchanged** from v1 (same module, same proxy). Its numbers are reported with the caveat that
+  provenance is constant per source.
+- D33. **Paper build.** `paper/build_paper.py` fills every number in `paper/paper.tex.in` from `results/` and compiles with the
+  local Docker image `texlive/texlive:latest-full` (no LaTeX is installed on the host). Figures: `paper/make_figures.py`
+  (data figures, from `results/metrics.json`) and `paper/figs/*.tex` (TikZ diagrams).

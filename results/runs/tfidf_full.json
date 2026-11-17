@@ -1,8 +1,8 @@
 {
  "name": "tfidf_full",
- "latency_ms_bs1": 0.6989741325378418,
- "n_params": 121867,
+ "latency_ms_bs1": 0.5682551860809326,
+ "n_params": 153456,
  "device": "cpu",
- "n_train": 6944,
+ "n_train": 19206,
  "exclude_sources": []
 }

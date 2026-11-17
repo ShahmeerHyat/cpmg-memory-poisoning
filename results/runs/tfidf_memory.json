@@ -1,8 +1,8 @@
 {
  "name": "tfidf_memory",
- "latency_ms_bs1": 0.3958725929260254,
- "n_params": 46449,
+ "latency_ms_bs1": 0.33791184425354004,
+ "n_params": 81741,
  "device": "cpu",
- "n_train": 6944,
+ "n_train": 19206,
  "exclude_sources": []
 }

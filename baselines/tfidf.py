@@ -23,11 +23,16 @@ def run_text(name, to_text, exclude=()):
     vec = TfidfVectorizer(ngram_range=(1, 2), min_df=2, max_features=200000, sublinear_tf=True)
     X = vec.fit_transform([to_text(r) for r in train])
     clf = LogisticRegression(C=1.0, class_weight="balanced", max_iter=3000, random_state=SEED)
-    clf.fit(X, [r["label"] for r in train])
+    clf.fit(X, [r["y_poison"] for r in train])
+    # second classifier for the activation target, trained where it is defined (AgentPoison records)
+    d = [i for i, r in enumerate(train) if r["y_active"] >= 0]
+    clf_a = LogisticRegression(C=1.0, class_weight="balanced", max_iter=3000, random_state=SEED)
+    clf_a.fit(X[d], [train[i]["y_active"] for i in d])
     f = lambda rows: clf.predict_proba(vec.transform([to_text(r) for r in rows]))[:, 1]
+    fa = lambda rows: clf_a.predict_proba(vec.transform([to_text(r) for r in rows]))[:, 1]
     for sp in PRED_SPLITS:
         rows = load(sp)
-        write_preds(name, sp, rows, f(rows))
+        write_preds(name, sp, rows, f(rows), fa(rows))
     write_run(name, latency_ms_bs1=latency_ms(f, load("test")), n_params=int(X.shape[1]) + 1, device="cpu",
               n_train=len(train), exclude_sources=list(exclude))
     print(name, "done")
@@ -39,7 +44,7 @@ def run_prov():
     enc = OneHotEncoder(handle_unknown="ignore")
     X = enc.fit_transform([[r[c] for c in cols] for r in train])
     clf = LogisticRegression(class_weight="balanced", max_iter=1000, random_state=SEED)
-    clf.fit(X, [r["label"] for r in train])
+    clf.fit(X, [r["y_poison"] for r in train])
     f = lambda rows: clf.predict_proba(enc.transform([[r[c] for c in cols] for r in rows]))[:, 1]
     for sp in PRED_SPLITS:
         rows = load(sp)

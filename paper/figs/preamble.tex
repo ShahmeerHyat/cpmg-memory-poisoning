@@ -1,0 +1,26 @@
+% Shared colours and TikZ styles for the diagrams (palette: reference categorical slots 1-3 + neutrals).
+\usepackage{tikz}
+\usetikzlibrary{positioning,fit,arrows.meta,calc,decorations.pathreplacing,shapes.misc,backgrounds}
+\definecolor{cblue}{HTML}{2A78D6}
+\definecolor{cblueL}{HTML}{E6F0FC}
+\definecolor{corange}{HTML}{EB6834}
+\definecolor{corangeL}{HTML}{FDE9E0}
+\definecolor{caqua}{HTML}{1BAF7A}
+\definecolor{caquaL}{HTML}{E2F6EE}
+\definecolor{cink}{HTML}{0B0B0B}
+\definecolor{cink2}{HTML}{52514E}
+\definecolor{cgrey}{HTML}{C9C8C2}
+\definecolor{cgreyL}{HTML}{F3F2EE}
+\tikzset{
+  rec/.style={draw=cgrey, fill=cgreyL, rounded corners=2pt, line width=0.6pt, align=left, inner sep=3.5pt,
+              font=\scriptsize, text=cink,
+              execute at begin node={\hyphenpenalty=10000\exhyphenpenalty=10000}},
+  atk/.style={rec, draw=corange, fill=corangeL, line width=0.9pt},
+  sys/.style={rec, draw=cblue, fill=cblueL, line width=0.9pt},
+  pol/.style={rec, draw=caqua, fill=caquaL, line width=0.9pt},
+  seg/.style={draw=cgrey, fill=cgreyL, line width=0.6pt, minimum height=0.52cm, inner sep=1.5pt, font=\scriptsize, text=cink},
+  hd/.style={font=\scriptsize\bfseries, text=cink2, align=center},
+  lab/.style={font=\scriptsize, text=cink2, align=center},
+  arr/.style={-{Stealth[length=4pt,width=3.5pt]}, line width=0.6pt, draw=cink2},
+}
+\newcommand{\trig}[1]{\textbf{\textcolor{corange}{#1}}}

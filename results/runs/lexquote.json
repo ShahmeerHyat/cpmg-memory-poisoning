@@ -1,0 +1,7 @@
+{
+ "name": "lexquote",
+ "latency_ms_bs1": 0.01111745834350586,
+ "n_params": 0,
+ "device": "cpu",
+ "input": "query, source, memory, neighbours"
+}

@@ -11,27 +11,39 @@
   "weight_decay": 0.01,
   "warmup": 0.1,
   "epochs": 2,
-  "grad_ckpt": true
+  "grad_ckpt": true,
+  "prov_dropout": 0.15
  },
  "limit": null,
- "n_train": 6944,
- "n_val": 1434,
- "best_val_auroc": 0.826206210960139,
+ "n_train": 19206,
+ "n_val": 4136,
+ "best_val_auroc": 0.7160910559556123,
  "history": [
   {
    "epoch": 0,
-   "val_auroc": 0.8233144439435894,
-   "elapsed_s": 218.3998363018036
+   "val_auroc": 0.7160910559556123,
+   "val": {
+    "poison": 0.8327083899405248,
+    "active": 0.5994737219706998,
+    "mean": 0.7160910559556123
+   },
+   "elapsed_s": 617.1441750526428
   },
   {
    "epoch": 1,
-   "val_auroc": 0.826206210960139,
-   "elapsed_s": 441.0545108318329
+   "val_auroc": 0.71580181135171,
+   "val": {
+    "poison": 0.8334296410349304,
+    "active": 0.5981739816684895,
+    "mean": 0.71580181135171
+   },
+   "elapsed_s": 1238.522249698639
   }
  ],
- "train_seconds": 442.1578481197357,
- "latency_ms_bs1": 10.230624675750732,
+ "train_seconds": 1240.5858783721924,
+ "latency_ms_bs1": 11.232993602752686,
  "n_params": 184362242,
  "gpu": "NVIDIA GeForce RTX 5060 Laptop GPU",
- "torch": "2.14.1+cu130"
+ "torch": "2.14.1+cu130",
+ "data_version": "v2"
 }

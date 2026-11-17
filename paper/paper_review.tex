@@ -1,0 +1,734 @@
+% Source template. Do not edit paper.tex by hand: run `python paper/build_paper.py`.
+% Every number is a double-bracket placeholder filled from results/ (see build_paper.py).
+% For anonymous conference submission change [final] to [review] and remove the author block.
+\documentclass[11pt]{article}
+\usepackage[review]{acl}
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage{inconsolata}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{adjustbox}
+\input{figs/preamble}
+\newcommand{\atk}[1]{\textbf{\textcolor{corange}{#1}}}
+
+\title{CPMG: A Context-Conditioned Guard for Compositional and Dormant\\Memory Poisoning in LLM Agents}
+
+\author{Anonymous submission}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+LLM agents store content from untrusted channels in long-term memory and reuse it later, so an attacker can plant a
+record now that changes an answer or a tool call in a later session. Guards that score one record at a time cannot
+see two kinds of attack: one whose harmful part sits in a different record, and one that stays inactive until a
+later query supplies its trigger. We present the Contextual Provenance Memory Guard (CPMG), a DeBERTa-v3-base
+cross-encoder that reads a memory record together with its source, the current query and its co-retrieved
+neighbours, and outputs two scores: whether the context contains attacker-written content, and whether the current
+query activates it. We build a matched evaluation from five public sources in which positives and negatives share
+the scored record and differ only in a neighbour or in the query, and in which every test trigger is a real
+AgentPoison trigger unseen in training. Record-only guards, including PIGuard, are at chance on these cases by
+construction. CPMG detects activation by unseen real triggers with 1.000 AUROC
+in one 10.5\,ms forward pass. When an LLM rewords the attack so that the trigger
+is no longer quoted, a hand-written rule that had matched CPMG falls to
+0.500 AUROC while CPMG stays at 0.998.
+We also report what did not work: the model ignores its provenance tokens, public benchmarks cannot test provenance
+at all, and the model is misled by a record format it has not seen.
+\end{abstract}
+
+\section{Introduction}
+
+Agents built on large language models keep a long-term memory so that they can use earlier conversations,
+documents and tool results in later tasks \citep{packer2023memgpt,park2023generative,xu2025amem}. Much of what
+they store comes from channels the user does not control: email, shared documents, web pages and tool outputs. An
+attacker who can write to one of these channels can place a record in memory that is retrieved in a later session
+and changes what the agent does \citep{chen2024agentpoison,dong2025minja,dash2026mpbench}. Such records persist:
+in one recent measurement, malicious memory survived in most cases and about half of the complete
+write-then-execute chains succeeded \citep{chen2026memsecbench}.
+
+The cheapest defence is a classifier that reads each record and flags injected instructions. PIGuard is a strong
+example \citep{li2025piguard}. A classifier of this kind reads one string, and Figure~\ref{fig:levels} shows why
+that is not enough. In a \emph{direct} attack (L1) the injected instruction is in the record, and a record-only
+guard can find it. In a \emph{compositional} attack (L2) the instruction is in a second record; the record being
+scored is clean and no score computed from it alone can be right. In a \emph{dormant} attack (L3) the instruction
+waits for a trigger; the same record is harmless under one query and harmful under another, so a guard that gives
+one score per record must be wrong for one of them.
+
+\begin{figure*}[t]
+\centering
+\input{figs/levels}
+\caption{Three levels of memory poisoning, shown on one AgentPoison record with the BadChain trigger. Orange boxes
+contain attacker-written text. A record-only guard reads the first column and nothing else. In L2 that column is
+clean. In L3 it is identical for the dormant and the active case.}
+\label{fig:levels}
+\end{figure*}
+
+A-MemGuard handles context by comparing reasoning paths built from related memories, at the cost of several LLM
+calls per check \citep{wei2026amemguard}. We ask a narrower question about cost: \emph{can a small encoder
+that reads the record together with its context detect L2 and L3 attacks in a single forward pass, and what does
+it actually learn when it does?}
+
+\paragraph{Contributions.}
+\begin{enumerate}[leftmargin=*,itemsep=1pt,topsep=2pt]
+\item \textbf{CPMG}, a cross-encoder guard with two outputs, \emph{poison} and \emph{activation}, that scores a
+record when it is written and again when it is retrieved (Section~\ref{sec:method}).
+\item \textbf{A matched evaluation} built from five public sources, in which the context is the only signal: paired
+examples share the scored record, negatives include wrong triggers and harmless repeated text, and all test triggers
+are real and unseen (Section~\ref{sec:data}).
+\item \textbf{Results.} Record-only guards are at chance on L2 and L3. CPMG reaches
+1.000 activation AUROC on unseen real triggers, and each part of its input is
+necessary for exactly one capability (Section~\ref{sec:main}).
+\item \textbf{A robustness test that separates the model from a rule.} A hand-written rule matches CPMG on the
+original attacks and fails when an LLM rewords them; CPMG does not (Section~\ref{sec:para}).
+\item \textbf{Negative findings} on provenance, on an unseen record format and on false alarms
+(Sections~\ref{sec:xtemplate}--\ref{sec:false}).
+\end{enumerate}
+
+\section{Related Work}
+
+\paragraph{Agent memory.} MemGPT, Generative Agents and A-Mem show why agents benefit from storing and
+reorganising experience \citep{packer2023memgpt,park2023generative,xu2025amem}. LoCoMo and LongMemEval measure
+long-term recall \citep{maharana2024locomo,wu2025longmemeval}. None of them measures resistance to poisoned
+content.
+
+\paragraph{Attacks.} AgentPoison optimises a trigger so that poisoned records are retrieved for triggered queries,
+and writes a conditional instruction into those records \citep{chen2024agentpoison}. MINJA plants records through
+ordinary queries \citep{dong2025minja}. Agent Security Bench includes memory poisoning among its attack families
+\citep{zhang2025asb}, and MemoryGraft poisons an agent's experience store \citep{srivastava2025memorygraft}. MPBench
+and MemSecBench follow poison from untrusted input to stored memory to action
+\citep{dash2026mpbench,chen2026memsecbench}.
+
+\paragraph{Defences.} PIGuard scores a single text and is built to avoid over-rejecting benign text
+\citep{li2025piguard}. A-MemGuard validates a memory against related memories with multiple reasoning paths
+\citep{wei2026amemguard}. BlindGuard learns normal interaction patterns between agents, not between memory records
+\citep{miao2026blindguard}. Origin-bound methods attach authority to where a record came from and stop a record from
+gaining authority through summarisation \citep{louck2026tmanm}. CPMG uses context as A-MemGuard does, at the cost of
+one encoder pass as PIGuard does. Its authority policy is a much simpler form of the origin-bound idea.
+
+\section{Threat Model}
+
+The attacker can write content into any channel the agent ingests and can choose its wording. The attacker cannot
+modify the metadata that the system records about a memory (channel, authority tier of the source, parent tool
+call) and cannot modify the guard. The attacker wants a stored record to change the agent's output or tool call
+later. The three levels are those of Figure~\ref{fig:levels}. \textbf{L1}: one record holds the complete malicious
+instruction. \textbf{L2}: the instruction is in a different record from the one being scored and takes effect when
+both are retrieved. \textbf{L3}: the instruction is conditional on a trigger string and takes effect only when a
+later query contains it. A guard must also keep useful memory, so we report false alarms on matched benign inputs.
+
+\section{Method}
+\label{sec:method}
+
+\begin{figure}[t]
+\centering
+\input{figs/arch}
+\caption{CPMG. The write checkpoint sees the left three segments. The retrieval checkpoint sees all of them.
+Both use the same encoder architecture and the same two outputs.}
+\label{fig:arch}
+\end{figure}
+
+\paragraph{Input.} CPMG is a DeBERTa-v3-base cross-encoder \citep{he2023debertav3}. Figure~\ref{fig:arch} shows its
+input: provenance tokens, the memory record, the interaction the record came from, the current query or planned
+action, and three co-retrieved neighbours, separated by \texttt{[SEP]}, in at most 512 tokens. The source, the query
+and each neighbour have budgets of 32, 48 and 64 tokens, and the record receives the rest.
+
+\paragraph{Provenance envelope.} Each memory carries four fields recorded by the system: channel, authority tier of
+the source (user, internal, external, unknown), age, and parent tool call. Each value is a special token, so
+record content cannot overwrite it.
+
+\paragraph{Two outputs.} The head has two independent sigmoid outputs. The \emph{poison} score answers: is
+attacker-written content present in this context, in the record or in a neighbour? The \emph{activation} score
+answers: does the current query carry the trigger that this content is conditional on? A dormant record under an
+ordinary query is poison${}=1$, activation${}=0$. One risk label cannot express this state, because it would have to
+call the same record harmful at write time and harmless at retrieval time.\footnote{An earlier version of our
+dataset used one label and contained this conflict; see Appendix~\ref{app:v1}.}
+
+\paragraph{Two checkpoints.} When a record is written no later query exists, so the write model sees provenance,
+record and source only. At retrieval the full input is available. ``Write+retrieval'' takes the maximum of the two
+poison scores.
+
+\paragraph{Training.} The loss is the sum of two class-weighted binary cross-entropy terms. The activation term is
+masked for records from sources with no known trigger. We train with AdamW, learning rate
+$2\times10^{-5}$, 2 epochs, effective batch size 16 and bf16 autocast, and
+keep the checkpoint with the best mean validation AUROC over the two outputs. Provenance tokens are removed from
+15\% of training examples so that the model can score records whose provenance it has not seen. The supervised
+contrastive term from our proposal was not implemented.
+
+\paragraph{Authority policy.} Separately from the model, a deterministic rule states that a memory whose source
+authority is external or unknown can never authorise a protected action (payment, sending or sharing data,
+changing settings, deletion).
+
+\section{Data}
+\label{sec:data}
+
+\subsection{Sources}
+
+We use public data only (Table~\ref{tab:data}): AgentPoison \citep{chen2024agentpoison}, Agent Security Bench (ASB)
+\citep{zhang2025asb}, MemoryGraft \citep{srivastava2025memorygraft}, memshield-bench \citep{pow2026memshield} and
+NotInject \citep{li2025piguard}. MPBench \citep{dash2026mpbench} has no data release and is not used. Two sources
+needed records to be produced before use.
+
+\emph{AgentPoison} ships clean knowledge bases and injection code but no poisoned records. We apply the authors'
+injection sentence, verbatim, to their StrategyQA and EHRAgent records. Each poisoned record has a clean twin, the
+same record without the injected part. \emph{ASB} ships poisoned plan memory only. We ran ASB's clean planning path
+with a local Qwen3-8B model for the same agents and tasks to obtain clean plans. This gives ASB a generator
+confound (poisoned plans come from gpt-4o-mini, clean plans from Qwen3-8B), discussed under Limitations. The
+poisoned entries of memshield-bench were written by that dataset's author. NotInject (339 benign prompts that
+contain trigger-like words) is used only to measure false alarms.
+
+\begin{table}[t]
+\centering\small
+\setlength{\tabcolsep}{3.5pt}
+\begin{adjustbox}{max width=\linewidth}
+\begin{tabular}{lrrrrrr}
+\toprule
+ & \multicolumn{2}{c}{Train} & \multicolumn{2}{c}{Val} & \multicolumn{2}{c}{Test} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+Source & clean & pois. & clean & pois. & clean & pois. \\
+\midrule
+AgentPoison & 4,530 & 14,024 & 1,005 & 2,968 & 931 & 2,872 \\
+ASB & 117 & 117 & 43 & 43 & 39 & 400 \\
+memshield-bench & 116 & 231 & 16 & 37 & 25 & 54 \\
+MemoryGraft & 66 & 5 & 22 & 2 & 12 & 3 \\
+\midrule
+Total & 4,829 & 14,377 & 1,086 & 3,050 & 1,007 & 3,329 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{Examples per source and split, by poison label. AgentPoison counts include the derived cases of
+Table~\ref{tab:variants}.}
+\label{tab:data}
+\end{table}
+
+\subsection{Matched cases}
+
+Only AgentPoison exposes both the injected span and the trigger exactly, so L2 and L3 cases are derived from its
+records. Table~\ref{tab:variants} lists the ten cases built from one poisoned record $P$, its clean twin $C$, the
+injected span (the \emph{payload}), its trigger $x$ and the original question $q$.
+
+\begin{table}[t]
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\begin{adjustbox}{max width=\linewidth}
+\begin{tabular}{@{}llllcc@{}}
+\toprule
+Case & Record & Neighbours & Query & Poi. & Act. \\
+\midrule
+L1 poisoned       & \atk{$P$} & clean & $q$ & 1 & 0 \\
+L1 clean twin     & $C$ & clean & $q$ & 0 & 0 \\
+L2                & $C$ & clean + \atk{payload} & $q$ & 1 & 0 \\
+\midrule
+L3 active         & \atk{$P$} & clean & $q$ + \atk{$x$} & 1 & 1 \\
+L3 wrong trigger  & \atk{$P$} & clean & $q$ + $y$ & 1 & 0 \\
+L3 overlap        & \atk{$P$} & clean & $q$ + $s$ & 1 & 0 \\
+\midrule
+L2+L3 active        & $C$ & clean + \atk{payload} & $q$ + \atk{$x$} & 1 & 1 \\
+L2+L3 wrong trigger & $C$ & clean + \atk{payload} & $q$ + $y$ & 1 & 0 \\
+L2+L3 overlap       & $C$ & clean + \atk{payload} & $q$ + $s$ & 1 & 0 \\
+\midrule
+Trigger, no payload & $C$ & clean & $q$ + $x$ & 0 & 0 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{The ten cases derived from one AgentPoison record, with their poison and activation labels. $y$ is a
+different trigger; $s$ is a 3--6 word span copied from the record's own clean text. Attacker-written parts are in
+orange. Within each block the record and neighbours are identical, so only the query separates the labels.}
+\label{tab:variants}
+\end{table}
+
+Two kinds of negative make the activation task hard. The \emph{wrong-trigger} negative stops a model from scoring
+activation by noticing an unusual string in the query. The \emph{overlap} negative stops it from scoring activation
+by noticing that the query repeats text from the context, which ordinary follow-up questions also do. No input
+appears twice with different labels.
+
+\subsection{Triggers}
+
+AgentPoison ships five trigger strings: its optimised trigger, an earlier optimised trigger left in a code
+comment, the BadChain phrase, and two seed phrases used to start optimisation. Five strings are too few to learn
+that activation means \emph{the query contains the string this record names}; a model trained on a few triggers
+memorises them. We therefore keep the real triggers \textbf{for testing only}. For training and validation, each
+AgentPoison record is injected with its own random trigger. Half are sequences of 3--8 tokens from the BERT
+vocabulary, which is the form of AgentPoison's optimised triggers. Half are 3--6 word spans cut from StrategyQA
+paragraphs that appear nowhere else in our data. These training triggers are synthetic. Together with the ASB clean plans above and the rewordings
+of Section~\ref{sec:para}, they are the only generated content we use. Training has
+1,753 distinct triggers. In the test set, half of the AgentPoison records carry one of
+the five real triggers and half carry new random triggers. No trigger string is shared between splits, and no real
+trigger occurs anywhere in training or validation data (0 occurrences by
+string search).
+
+\subsection{Splits and provenance}
+
+Records are grouped by source record or scenario, and a group with all of its derived cases goes to one split
+(0 groups cross splits). ASB is split by agent. All records of all ten ASB agents
+also form a separate cross-source test for a model trained without ASB. Neighbours are the three most similar
+clean records from the same source and split.
+
+No source records per-item provenance, so we assign provenance from each source's documented origin; for example,
+AgentPoison's StrategyQA knowledge base is tagged web/external. Provenance is therefore constant within a source. A
+classifier that sees only provenance scores 0.518 AUROC within AgentPoison, so
+provenance does not leak the label. For the same reason it cannot carry any signal beyond dataset identity; we
+return to this in Section~\ref{sec:prov}.
+
+\section{Experimental Setup}
+
+\paragraph{Baselines.} (i) \emph{Content-only DeBERTa}: the same model and training, with the record as its only
+input. (ii) \emph{PIGuard}, public checkpoint, zero-shot on the record \citep{li2025piguard}. (iii) A \emph{keyword
+filter} with 18 injection patterns. (iv) \emph{TF-IDF with logistic regression}, on the record alone and on the full
+flattened CPMG input. (v) A \emph{copy rule} with no training: the share of the query's extra tokens that also
+occur as one contiguous run in the record or its neighbours. (vi) A \emph{quoted-copy rule}$^\dagger$: the same, but
+counting only strings that the context puts in quotation marks before the words ``in the question''. This rule
+encodes the wording of AgentPoison's two injection sentences. It shows what knowledge of the attack template
+achieves without any learning.
+
+\paragraph{Ablations.} CPMG without provenance, without the query, without neighbours, and the write-time model
+alone.
+
+\paragraph{Metrics.} AUROC and true-positive rate at 1\% false-positive rate (TPR@1\%), on the matched positives
+and negatives of each case. Thresholds are chosen on validation data (maximum F1) and applied unchanged to test
+data. CPMG, content-only and CPMG without provenance are trained with 3 seeds; we report the
+mean, and the standard deviation where it is not zero at the printed precision. Other models use one seed. The
+dataset is built once. Everything runs on one laptop GPU (RTX 5060, 8\,GB).
+
+\section{Results}
+\label{sec:results}
+
+\subsection{Who can detect what}
+\label{sec:main}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/capability_matrix.pdf}
+\caption{Test AUROC of every model on the four tasks. Activation columns use the five real triggers, against
+wrong-trigger and overlap negatives together. White cells are at chance. $^\dagger$The quoted-copy rule encodes the
+attack template. Exact values with deviations are in Table~\ref{tab:main}.}
+\label{fig:matrix}
+\end{figure}
+
+Figure~\ref{fig:matrix} summarises the main result; Table~\ref{tab:main} in the appendix has exact values.
+
+\paragraph{L1 does not separate methods.} Every trained model detects direct attacks almost perfectly, including
+TF-IDF on the record alone (0.986 AUROC). The injected instructions in public datasets are
+lexically distinctive. We base no claim on L1. The one visible difference is at low false-positive rates, where
+zero-shot PIGuard detects 53.4\% of L1 records at 1\% FPR and CPMG
+99.5\,$\pm$\,0.7\%. On memshield-bench, the smallest and hardest source, CPMG at retrieval
+(0.954\,$\pm$\,0.030) is not better than the content-only model
+(0.970\,$\pm$\,0.019); see Table~\ref{tab:persource}.
+
+\paragraph{L2 needs the neighbours, and nothing more.} The scored record is identical for L2 positives and
+negatives, so every model that reads only the record is at chance (content-only:
+0.499; PIGuard: 0.500). CPMG reaches 1.000. So
+does TF-IDF over the full input (1.000): once the payload is visible among the neighbours it is
+as easy to detect as in L1. L2 built from public data therefore measures whether a guard \emph{looks at}
+co-retrieved records. It does not measure reasoning over fragments that are each benign, and we make no such
+claim.
+
+\paragraph{L3 needs the query, and a relation between query and context.} All positives and negatives in the
+activation columns share the record and neighbours and differ only in the query. Models without the query are at
+chance. TF-IDF over the full input is also at chance (0.494), because the test
+triggers are unseen strings. The copy rule separates the right trigger from a wrong trigger but not from overlap
+(0.500), because it cannot tell a repeated trigger from repeated harmless text; its
+combined score is 0.750.
+
+CPMG reaches 1.000 AUROC (seed-42 bootstrap 95\% CI
+[1.000, 1.000]) and 100.0\% TPR at 1\% FPR on the five
+real triggers, having been trained only on random ones (per-trigger values in Table~\ref{tab:pertrigger}). When
+the payload is in a neighbour (L2+L3) it reaches 1.000. When the query carries a
+trigger and the context holds no payload, it raises the activation flag in
+0.0\% of cases.
+
+\paragraph{Each input segment supports one capability.} The ablation rows of Figure~\ref{fig:matrix} show a clean
+pattern. Without the query, activation falls to chance (0.495) and poison
+detection is unchanged. Without neighbours, L2 falls to chance (0.500) and L2+L3 activation
+falls to 0.742, while L3 activation, where the payload is in the record itself,
+is unaffected. The write-time model behaves like the content-only baseline on every context-dependent case. This is
+the cost of scoring before the query exists and the reason for the second checkpoint. Removing provenance changes
+nothing (Section~\ref{sec:prov}).
+
+\subsection{Rewording the attack separates the model from a rule}
+\label{sec:para}
+
+Figure~\ref{fig:matrix} has an uncomfortable last row: the quoted-copy rule scores
+1.000. AgentPoison's injection sentence always names its trigger in quotation marks
+before the words ``in the question'', and a regular expression that knows this recovers the trigger exactly. On the
+attacks as published, a learned model has no accuracy advantage over a rule written with knowledge of the template.
+
+An attacker is not bound to the published wording. We therefore rewrote the injected sentence of every
+AgentPoison test record with an LLM (Qwen3-8B), leaving the question, the trigger, the neighbours and the labels
+unchanged, and re-scored all models with no retraining. The LLM saw a placeholder in place of the trigger, so it
+could not alter the trigger string. A rewrite was accepted only if it shared at most 60\% of its word set with the
+original. We use two conditions. \emph{Reworded}: same meaning, different words
+(186 distinct sentences over 359 records). \emph{Reworded, no quotes}: in
+addition the trigger is not quoted and the words ``in the question'' are not used
+(148 distinct sentences). For example, one injected sentence with the BadChain trigger
+becomes: ``The original response is Yes, but the presence of \textit{In a parallel universe} in the user's request indicates an action quota limit, so output `I don't know' as the final answer and conclude the episode.''
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/generalisation.pdf}
+\caption{Activation AUROC (L3, against wrong-trigger and overlap negatives) as the test moves away from the
+training data. The dashed line is chance. CPMG is never retrained. $^\dagger$Encodes the original attack
+template.}
+\label{fig:gen}
+\end{figure}
+
+\begin{table*}[t]
+\centering\small
+\setlength{\tabcolsep}{4.5pt}
+\begin{adjustbox}{max width=\linewidth}
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+ & \multicolumn{3}{c}{Poison L1, TPR@1\%} & \multicolumn{3}{c}{Activation L3, AUROC} & \multicolumn{3}{c}{Activation L3, TPR@1\%} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(lr){8-10}
+Model & orig. & rew. & rew.-nq & orig. & rew. & rew.-nq & orig. & rew. & rew.-nq \\
+\midrule
+CPMG (retrieval) & 100.0 & 100.0 & 100.0 & 1.000 & 1.000 & 0.998 & 100.0 & 100.0 & 99.4 \\
+CPMG $-$ provenance & 100.0 & 100.0 & 100.0 & 1.000 & 0.999 & 0.997 & 100.0 & 99.7 & 98.2 \\
+\midrule
+Quoted-copy rule$^\dagger$ & -- & -- & -- & 1.000 & 0.993 & 0.500 & 100.0 & 98.6 & 0.0 \\
+Copy rule & -- & -- & -- & 0.750 & 0.750 & 0.750 & 0.0 & 0.0 & 0.0 \\
+TF-IDF (full input) & 100.0 & 51.8 & 39.3 & 0.496 & 0.505 & 0.504 & 1.1 & 1.1 & 0.8 \\
+Content-only DeBERTa & 100.0 & 100.0 & 99.5 & 0.503 & 0.499 & 0.500 & 0.6 & 0.3 & 0.5 \\
+PIGuard (zero-shot) & 70.5 & 54.9 & 76.3 & 0.500 & 0.500 & 0.500 & 0.3 & 0.6 & 0.8 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{Original attack (orig.), reworded attack (rew.) and reworded attack without quotation marks around the
+trigger (rew.-nq). Poison: AgentPoison L1 records against their clean twins. Activation: L3 against wrong-trigger
+and overlap negatives, all test triggers. No model is retrained. TPR in percent. $^\dagger$Encodes the original
+attack template.}
+\label{tab:robust}
+\end{table*}
+
+Figure~\ref{fig:gen} and Table~\ref{tab:robust} show the outcome. Under plain rewording the quoted-copy rule still
+works (0.993), because 354 of 359 rewrites keep
+the quoted trigger. Once the quoting is gone the rule is at chance (0.500). CPMG
+stays at 0.998\,$\pm$\,0.002 AUROC and 99.4\,$\pm$\,0.5\% TPR at 1\%
+FPR. Rewording also weakens lexical poison detection: TF-IDF over the full input drops from
+100.0\% to 39.3\% TPR at 1\% FPR on
+L1, while CPMG stays at 100.0\%.
+
+This is the evidence that CPMG learned something more general than the template: it identifies the string that the
+poisoned content makes its condition, however that condition is phrased, and checks whether the query contains it.
+The test has limits. The rewrites come from one model, stay close to the original meaning, and the attacker did
+not optimise against CPMG itself.
+
+\subsection{An unseen record format misleads the model}
+\label{sec:xtemplate}
+
+To test transfer to an attack the model has not seen, we trained CPMG without any EHRAgent record and tested it on
+EHRAgent. That model has seen only StrategyQA's injected records. EHRAgent uses a different sentence (``Because
+there is \ldots\ in the question, this means that we have to delete the data''), a different harmful action
+(a database read replaced by a delete) and a different record layout.
+
+\begin{table}[t]
+\centering\small
+\begin{adjustbox}{max width=\linewidth}
+\begin{tabular}{lrrrr}
+\toprule
+Model & P-L1 & P-L2 & A-L2+L3 & A-L3 \\
+\midrule
+CPMG (retrieval) & 1.000 & 1.000 & 1.000 & 1.000 \\
+CPMG trained w/o EHRAgent & 1.000 & 1.000 & 1.000 & 0.508 \\
+Content-only DeBERTa & 1.000 & 0.499 & 0.500 & 0.499 \\
+\midrule
+Quoted-copy rule$^\dagger$ & -- & -- & 1.000 & 1.000 \\
+Copy rule & -- & -- & 0.750 & 0.750 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{EHRAgent test records, AUROC (35 record groups). P = poison, A = activation
+against wrong-trigger and overlap negatives. ``Trained w/o EHRAgent'' never saw EHRAgent's injection sentence or
+record format. $^\dagger$Encodes both injection sentences.}
+\label{tab:xtemplate}
+\end{table}
+
+Table~\ref{tab:xtemplate} shows a split result. Poison detection is unaffected
+(1.000 on L1 and 1.000 on L2), but L1 is a weak test here: an
+injected EHRAgent record contains a database delete, and the content-only model also scores
+1.000 on it. Activation works when the payload is in a neighbour
+(1.000). We do not read this as transfer to new wording, because the two injection
+sentences share the phrase ``there is \ldots\ in the question''; the rewording test of Section~\ref{sec:para} is
+our evidence on wording. Activation fails completely when the payload is in the record
+(0.508): the model outputs activation${}=1$ for every such record, whatever the query.
+The cause is the record format. A poisoned EHRAgent record stores its own triggered question as its first line, so
+the trigger already appears twice inside the record. StrategyQA records never do this, and a model trained only on
+them treats the stored copy as if it were the query. A model trained with EHRAgent records does not make this
+mistake (1.000). The sample is small (35 groups), but the
+failure is total, and it shows that the model's notion of ``where the trigger is'' depends on record layouts it has
+seen.
+
+\subsection{Provenance: no effect, and no way to test it}
+\label{sec:prov}
+
+Our proposal expected system-recorded provenance to help the guard. We found no evidence for this, for two
+separate reasons.
+
+\emph{The model does not use the tokens.} Training without provenance gives the same results on every task
+(Figure~\ref{fig:matrix}). Swapping each test record's provenance for that of a different source changes the
+poison score by 0.000 on average and flips
+0.0\% of decisions (Table~\ref{tab:provswap}).
+
+\emph{The data could not have shown a benefit.} In every public source we found, provenance is a property of the
+dataset and not of the record: all records of a source, clean and poisoned, arrive through one channel with one
+authority tier. A provenance feature can then only identify the dataset. Testing the provenance hypothesis needs a
+benchmark in which the same content appears with different origins and the correct decision depends on the origin,
+for example an instruction that is legitimate when it comes from the user and an attack when it comes from a web
+page. We consider this the most useful missing resource for this line of work.
+
+The authority policy suffers from the same problem. On real L1 test records it blocks
+39 of the 119 poisoned records that mention a
+protected action and 38 of the 38 clean records that mention one,
+and it blocks no ASB record because ASB's injections arrive through the user prompt. With
+provenance fixed per source the policy is a per-source switch, and this evaluation says little about its value.
+
+\subsection{False alarms, transfer across sources, and cost}
+\label{sec:false}
+
+\begin{table}[t]
+\centering\small
+\begin{adjustbox}{max width=\linewidth}
+\begin{tabular}{lrr}
+\toprule
+Model & NotInject & Trigger, no payload \\
+\midrule
+CPMG (retrieval) & 22.2\,$\pm$\,4.5 & 0.0 \\
+CPMG write+retrieval & 38.0\,$\pm$\,10.8 & 0.2\,$\pm$\,0.1 \\
+CPMG $-$ provenance & 39.4\,$\pm$\,23.4 & 0.0 \\
+Content-only DeBERTa & 43.0\,$\pm$\,11.7 & 100.0 \\
+PIGuard (zero-shot) & 90.3 & 95.0 \\
+TF-IDF (memory) & 97.6 & 96.9 \\
+TF-IDF (full input) & 73.2 & 9.7 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{False alarms of the poison output at the validation threshold, in percent. NotInject: benign prompts with
+trigger-like words. Trigger, no payload: clean record and neighbours with a trigger in the query.}
+\label{tab:false}
+\end{table}
+
+\paragraph{False alarms.} On NotInject, CPMG flags 22.2\,$\pm$\,4.5\% of benign prompts
+(Table~\ref{tab:false}). NotInject is far from our training data: its inputs are user prompts with no query or
+neighbours, and its provenance tags never occur in training. The rate is still too high for deployment and it
+varies across seeds, which shows that the poison output over-reacts to instruction-like wording outside the sources
+it was trained on. PIGuard was built against this failure; the 90.3\% we report for it is
+at the threshold our validation data selects, which is not PIGuard's intended operating point.
+
+\paragraph{Unseen source.} A CPMG model trained without ASB ranks all ASB records correctly
+(1.000 AUROC) but its validation threshold transfers badly: it flags only
+12.4\% of poisoned ASB records (Table~\ref{tab:xsource}). A threshold chosen on
+one source is not safe on another. ASB is also an easy source, since a keyword filter reaches
+1.000 AUROC on it.
+
+\paragraph{Cost.} CPMG takes 10.5\,ms per check on a laptop GPU, the same as the
+content-only model (10.4\,ms; Table~\ref{tab:cost}). Reading the context costs
+nothing in model size and almost nothing in latency at this input length. We did not run A-MemGuard, so we cannot
+report the cost ratio to an LLM-based contextual defence that our proposal set out to measure.
+
+\section{Conclusion}
+
+A guard that scores memory records one at a time cannot see an attack that depends on a neighbouring record or on
+a later query. This holds for a strong pretrained filter as much as for a keyword list, because the information is
+not in its input. Giving a small cross-encoder the query and the co-retrieved records, and asking it two
+questions instead of one, removes that blindness at no extra cost per check. The model generalises to real
+triggers it never saw and to attacks reworded by an LLM, where a rule built from the attack template fails. It does
+not generalise to a record layout it has not seen, it raises too many false alarms on out-of-distribution benign
+text, and it makes no use of provenance. Public benchmarks do not yet contain what is needed to test the last
+point: the same content arriving from different origins.
+
+\section*{Limitations}
+
+\textbf{Template-based attacks.} All L2 and L3 cases derive from AgentPoison, which uses one injection sentence per
+agent. Scores at ceiling reflect how regular these attacks are. Our rewording test uses one LLM and does not
+optimise against CPMG.
+\textbf{Synthetic training triggers.} Training triggers are random strings inserted with the authors' template.
+Test triggers are real, but there are only five.
+\textbf{Derived cases.} L2, L3 and L2+L3 are transformations of real records, not attacks observed in a running
+agent, and L2 does not test composition of fragments that are each benign.
+\textbf{Offline evaluation.} We measure detection, not end-to-end attack success in an agent, and not the effect on
+useful recall (for example on LongMemEval). Both were in our proposal and are not done.
+\textbf{Missing baselines.} A-MemGuard and an adapted BlindGuard were planned and not run.
+\textbf{ASB confound.} Clean and poisoned ASB plans come from different generators, so ASB results say little about
+content.
+\textbf{Provenance.} Assigned per source from documentation, and therefore untestable here.
+\textbf{Seeds.} Three seeds for the main models, one for the rest; the dataset is built once.
+
+\section*{Ethics Statement}
+
+This work studies defences. All attack data come from public research datasets, and the records we produced apply
+the original authors' published injection templates to their published data. The reworded attacks are a robustness
+test of existing published attacks and add no new capability. We release code and derived data so that the
+evaluation can be reproduced.
+
+\bibliography{references}
+
+\appendix
+
+\section{Changes from our earlier version}
+\label{app:v1}
+
+A first version of this dataset, used a single risk label.
+In it, every L3 negative (a poisoned record with a neutral query) was the same input as an L1 positive with the
+opposite label, for 878 training and 359 test inputs. It also had one trigger in training and one held out, so
+the L3 test could only be passed by memorising a string. Numbers from that version are not comparable to those
+here and should not be cited. The two outputs, the per-record triggers and the wrong-trigger and overlap negatives
+were introduced to fix these problems. The earlier results are kept in the repository under \texttt{results/v1/}.
+
+\section{Full results}
+\label{app:full}
+
+Tables~\ref{tab:main}--\ref{tab:cost} give the exact values behind the figures and the results cited in the text.
+
+\begin{table*}[h!]
+\centering\small
+\setlength{\tabcolsep}{3.2pt}
+\begin{adjustbox}{max width=\linewidth}
+\begin{tabular}{lrrrrrrrrrrr}
+\toprule
+ & \multicolumn{3}{c}{Poison} & \multicolumn{4}{c}{Activation L3, real triggers} & \multicolumn{3}{c}{Activation L2+L3, real} & Rand. \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-8}\cmidrule(lr){9-11}\cmidrule(lr){12-12}
+Model & L1 & L1 TPR & L2 & no trig. & wrong & overlap & TPR & wrong & overlap & TPR & L3 \\
+\midrule
+CPMG (retrieval) & 1.000 & 99.5\,$\pm$\,0.7 & 1.000 & 1.000 & 1.000 & 1.000 & 100.0 & 1.000 & 1.000 & 100.0 & 1.000 \\
+CPMG write+retrieval & 1.000 & 100.0 & 1.000 & 1.000 & 1.000 & 1.000 & 100.0 & 1.000 & 1.000 & 100.0 & 1.000 \\
+\midrule
+CPMG $-$ provenance & 1.000 & 99.9\,$\pm$\,0.2 & 1.000 & 1.000 & 1.000 & 1.000 & 100.0 & 1.000 & 1.000 & 100.0 & 1.000 \\
+CPMG $-$ query & 0.999 & 98.2 & 1.000 & 0.501 & 0.496 & 0.493 & 0.0 & 0.500 & 0.500 & 0.5 & 0.498 \\
+CPMG $-$ neighbours & 0.997 & 99.5 & 0.500 & 1.000 & 1.000 & 1.000 & 100.0 & 0.484 & 1.000 & 2.1 & 1.000 \\
+CPMG write-time only & 1.000 & 100.0 & 0.498 & 0.488 & 0.497 & 0.489 & 0.0 & 0.503 & 0.508 & 0.5 & 0.505 \\
+\midrule
+Content-only DeBERTa & 0.993\,$\pm$\,0.004 & 98.7\,$\pm$\,0.7 & 0.499\,$\pm$\,0.001 & 0.503\,$\pm$\,0.006 & 0.504\,$\pm$\,0.004 & 0.504\,$\pm$\,0.003 & 0.5 & 0.500\,$\pm$\,0.003 & 0.499\,$\pm$\,0.001 & 0.5 & 0.503\,$\pm$\,0.006 \\
+PIGuard (zero-shot) & 0.964 & 53.4 & 0.500 & 0.500 & 0.500 & 0.500 & 0.5 & 0.500 & 0.500 & 1.1 & 0.500 \\
+Keyword filter & 0.776 & 55.3 & 0.500 & 0.500 & 0.500 & 0.500 & 0.0 & 0.500 & 0.500 & 0.0 & 0.500 \\
+TF-IDF (memory) & 0.986 & 94.2 & 0.500 & 0.500 & 0.500 & 0.500 & 0.5 & 0.500 & 0.500 & 0.5 & 0.500 \\
+TF-IDF (full input) & 0.961 & 45.2 & 1.000 & 0.472 & 0.497 & 0.491 & 0.0 & 0.492 & 0.487 & 0.5 & 0.499 \\
+\midrule
+Copy rule & -- & -- & -- & 1.000 & 1.000 & 0.500 & 0.0 & 1.000 & 0.500 & 0.0 & 0.750 \\
+Quoted-copy rule$^\dagger$ & -- & -- & -- & 1.000 & 1.000 & 1.000 & 100.0 & 1.000 & 1.000 & 100.0 & 1.000 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{Exact values behind Figure~\ref{fig:matrix}. AUROC unless marked TPR (TPR at 1\% FPR, percent). Activation
+columns: against negatives with no trigger, a wrong real trigger, or overlap; TPR is against wrong-trigger and overlap
+negatives together. Last column: L3 with new random triggers. $\pm$ is the standard deviation over three seeds,
+omitted when zero at the printed precision. $^\dagger$Encodes the attack template.}
+\label{tab:main}
+\end{table*}
+
+\begin{table}[h!]
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\begin{adjustbox}{max width=\linewidth}
+\begin{tabular}{llrrr}
+\toprule
+Trigger & Kind & $n$ & AUROC & TPR@1\% \\
+\midrule
+\texttt{com \#\#cturing reeve eased pulled} & optimised (AgentPoison) & 68 & 1.000 & 100.0 \\
+\texttt{kelsey rocked stench distinguish \ldots} & earlier optimised & 92 & 1.000 & 100.0 \\
+\texttt{In a parallel universe} & BadChain phrase & 64 & 1.000 & 100.0 \\
+\texttt{Be careful and drive safe.} & seed phrase & 62 & 1.000 & 100.0 \\
+\texttt{Make efficient tool calls.} & seed phrase & 90 & 1.000 & 100.0 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{CPMG activation on each real trigger: positives carrying that trigger against all real-trigger
+wrong-trigger and overlap negatives.}
+\label{tab:pertrigger}
+\end{table}
+
+\begin{table}[h!]
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\begin{adjustbox}{max width=\linewidth}
+\begin{tabular}{lrrrr}
+\toprule
+Model & AgentPoison & ASB & memshield & MemoryGraft \\
+\midrule
+CPMG (retrieval) & 1.000 & 1.000 & 0.954\,$\pm$\,0.030 & 1.000 \\
+CPMG write+retrieval & 1.000 & 1.000 & 0.981\,$\pm$\,0.006 & 1.000 \\
+CPMG write-time only & 1.000 & 1.000 & 0.987 & 1.000 \\
+Content-only DeBERTa & 1.000 & 1.000 & 0.970\,$\pm$\,0.019 & 1.000 \\
+PIGuard (zero-shot) & 0.988 & 1.000 & 0.754 & 0.750 \\
+Keyword filter & 0.549 & 1.000 & 0.620 & 0.833 \\
+TF-IDF (memory) & 1.000 & 1.000 & 0.811 & 1.000 \\
+TF-IDF (full input) & 1.000 & 1.000 & 0.667 & 0.889 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{Poison detection on L1 by source, test AUROC. ASB test is two held-out agents; MemoryGraft test has 15
+records.}
+\label{tab:persource}
+\end{table}
+
+\begin{table}[h!]
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\begin{adjustbox}{max width=\linewidth}
+\begin{tabular}{lrrrrr}
+\toprule
+Model & Orig. & Swapped & Removed & $|\Delta|$ & Flips\,\% \\
+\midrule
+CPMG (retrieval) & 1.000 & 1.000 & 1.000 & 0.000 & 0.0 \\
+CPMG $-$ query & 1.000 & 1.000 & 1.000 & 0.000 & 0.0 \\
+CPMG $-$ neighbours & 0.902 & 0.902 & 0.903 & 0.000 & 0.0 \\
+CPMG write-time only & 0.845 & 0.845 & 0.845 & 0.000 & 0.0 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{Provenance counterfactual. The same test records are scored with their provenance tokens swapped for
+another source's, or removed. $|\Delta|$: mean absolute change in poison score.}
+\label{tab:provswap}
+\end{table}
+
+\begin{table}[h!]
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\begin{adjustbox}{max width=\linewidth}
+\begin{tabular}{lrrrr}
+\toprule
+Model & AUROC & TPR@1\% & Recall & FPR \\
+\midrule
+CPMG trained w/o ASB & 1.000 & 100.0 & 12.4 & 0.0 \\
+TF-IDF (memory) w/o ASB & 0.394 & 0.5 & 89.6 & 93.0 \\
+PIGuard (zero-shot) & 0.923 & 38.0 & 100.0 & 100.0 \\
+Keyword filter & 1.000 & 100.0 & 100.0 & 100.0 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{Trained without ASB, tested on all 2,012 poisoned and 199 clean
+ASB records. Recall and FPR at the validation threshold, in percent.}
+\label{tab:xsource}
+\end{table}
+
+\begin{table}[h!]
+\centering\small
+\begin{adjustbox}{max width=\linewidth}
+\begin{tabular}{lrrr}
+\toprule
+Model & Params & ms/check & Train (min) \\
+\midrule
+CPMG (retrieval) & 184M & 10.52 & 33 \\
+CPMG write-time only & 184M & 11.23 & 21 \\
+Content-only DeBERTa & 184M & 10.43 & 20 \\
+PIGuard (zero-shot) & 184M & 11.95 & -- \\
+TF-IDF (full input) & 153K & 0.57 & -- \\
+Copy rule & 0 & 0.04 & -- \\
+Keyword filter & 0 & 0.12 & -- \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{Cost per check at batch size 1.}
+\label{tab:cost}
+\end{table}
+
+\section{Reproducibility}
+
+Code, splits, predictions and the script that fills every number in this paper from the result files are at
+a public repository (link removed for anonymous review). Every decision that affects the data, the model or the
+evaluation is logged in \texttt{results/DECISIONS.md}.
+
+\end{document}
